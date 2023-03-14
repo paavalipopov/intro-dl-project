@@ -37,7 +37,7 @@ PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model lstm --ds abi
 ### Required
 - `--mode`: 
     - `tune` - tune mode: run multiple experiments with different hyperparams
-    - `experiment` - experiment mode: run experiments with best hyperparams found in the `tune` mode
+    - `exp` - experiment mode: run experiments with best hyperparams found in the `tune` mode
     - `resume` - see below
 - `--model`: some of the working models; check the sourse code for more info
     - `lstm`
