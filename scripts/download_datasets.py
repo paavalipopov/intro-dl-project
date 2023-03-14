@@ -1,3 +1,5 @@
+# pylint: disable=C0301, W0632
+"""Script for downloading fMRI datasets"""
 import requests
 
 from src.settings import DATA_ROOT
@@ -30,5 +32,6 @@ items = [
 ]
 
 for item in items:
-    r = requests.get(item[0], allow_redirects=True)
-    open(item[1], "wb").write(r.content)
+    r = requests.get(item[0], allow_redirects=True, timeout=100)
+    with open(item[1], "wb") as f:
+        f.write(r.content)
