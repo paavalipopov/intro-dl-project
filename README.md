@@ -1,36 +1,38 @@
-# Experiment Template
-
-- `.github/workflow` - codestyle and CI
-- `assets` - datasets, logs, etc
-- `bin` - bash files to start pipelines
-- `docker` - docker files
-- `examples` - notebooks and full-featured examples
-- `requirements` - python requirements
-- `src` - code
-- `tests` - tests
-
-## How to reproduce?
+# Requirements
 
 ```bash
-bash bin/...  # download data
-pip install -r ./requirements/...  # install dependencies, or use docker
-bash bin/...  # run experiments
-# use examples/... to analize results
+conda create -n introdl python=3.9
+conda activate introdl
+- if mac user:
+    conda install pytorch torchvision torchaudio -c pytorch
+- else:
+    conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
+pip install -r requirements.txt
+```
+To download fMRI datasets, run
+```
+PYTHONPATH=./ python scripts/download_datasets.py
 ```
 
-## Examples
+# Examples
 ```
-for model in mlp new_attention_mlp lstm transformer
+for model in lstm mean_lstm transformer mean_transformer
 do
-    for dataset in oasis abide fbirn cobre abide_869 bsnip
+    for dataset in cobre abide
     do
-        PYTHONPATH=./ python src/scripts/ts_dl_experiments.py --mode tune --model $model --ds $dataset --max-epochs 200 --num-trials 10     
-        PYTHONPATH=./ python src/scripts/ts_dl_experiments.py --mode experiment --model $model --ds $dataset --max-epochs 200 --num-trials 10     
+        PYTHONPATH=./ python scripts/run_experiments.py --mode tune --model $model --ds $dataset --prefix test
+        PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model $model --ds $dataset --prefix test
     done
 done
 ```
+or
+```
+PYTHONPATH=./ python scripts/run_experiments.py --mode tune --model lstm --ds abide --prefix test
+PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model lstm --ds abide --prefix test
 
-## Options for `src/scripts/ts_dl_experiments.py`
+```
+
+## Options for `scripts/run_experiments.py`
 
 ### Required
 - `--mode`: 
@@ -38,95 +40,45 @@ done
     - `experiment` - experiment mode: run experiments with best hyperparams found in the `tune` mode
     - `resume` - see below
 - `--model`: some of the working models; check the sourse code for more info
-    - `mlp`
-    - `wide_mlp`
-    - `deep_mlp`
-    - `new_attention_mlp`
     - `lstm`
-    - `noah_lstm`
+    - `mean_lstm`
     - `transformer`
     - `mean_transformer`
 - `--ds`: dataset for the experiments
-    - `oasis`
-    - `adni`
     - `cobre`
-    - `bsnip`
+    - `abide`
 
-    - `abide` - ICA ABIDE1 (569 subjects)
-    - `abide_869` - ICA ABIDE1 (869 subjects)
-    - `abide_roi` - ROI Schaefer 200 ABIDE1
-
-    - `ukb`
-
-    - `fbirn` - ICA Fbirn
-    - `time_fbirn` - Time and time-reversed ICA FBIRN
-    - `fbirn_100` - ROI Schaefer 100 FBRIN
-    - `fbirn_200` - ROI Schaefer 200 FBRIN
-    - `fbirn_400` - ROI Schaefer 400 FBRIN
-    - `fbirn_1000` - ROI Schaefer 1000 FBRIN
-
-    - `hcp_roi`
 
 ### Optional
-- `--test-ds`: additional datasets for tests
-    - fraction of dataset from `--ds` is always used for tests, no need to use it here
-    - options are the same as for `--ds`
-    - for multiple datasets, write them in a space separated way
-
 - `--prefix`: custom prefix for the project
     - default prefix is UTC time
     - appears in the name of logs directory and the name of WandB project
-    - `tune`->`experiment` experiments should use the same prefix (unless it is default)
+    - `tune`->`exp` experiments will use the same prefix (unless it is default)
     - don't use `-` character in the prefix
-    - don't use `resume` as a prefix
+    - don't use `resume` or `tune` as a prefix
 
-- `scaled`: whether dataset should be scaled first using `sklearn`'s `StandardScaler`
+- `--multiclass`: some datasets have multiple classes (default: False); pass `--multiclass` if you want to load all classes
 
-- `--max-epochs` - max epochs to use (default=30):
-    - don't use less than 30 epochs
-    - in `tune` mode the number of epochs is choosen randomly between `30` and `max-epochs`
-    - in `experiment` mode the number of epochs is `max-epochs` 
+- `--zscore`: whether dataset should be zscored over time direction (default: False); pass `--zscore` if you want zscore the data
 
-- `--num-splits` - number of splits for `StratifiedKFold` cross-validation (default=5):
-    - the `ds` dataset is split in `num-splits` equally sized folds; 
-    - each fold is used as test dataset `num-splits` times (see below), the rest is train-val dataset
+- `--filter-indices`: whehter ICA components in real-world fMRI data should be filtered (default: True); pass `--no-filter-indices` if you want to load all ICA components
 
-- `--num-trials` - number of trials for each fold (default=1):
-    - for each trial, a new seed for `train_test_split` is used for splitting train-val dataset into train and val datasets
+- `--max-epochs` - max epochs to use (default: 200)
+
+- `--n-splits` - number of splits for `StratifiedKFold` cross-validation (default=5):
+    - the `ds` dataset is split in `num-splits` equally sized folds
+
+- `--n-trials` - number of trials for each test fold (default=50 for `tune` and 10 for `exp`):
+    - in `tune` it equals to number of different hyperparams sets tested on each fold
+    - in `exp` mode, for each trial, a new seed for `train_test_split` is used for splitting train-val dataset into train and val datasets
     - **important note**: if you provide the same `num-splits` and `num-trials` for different experiments on the same dataset, datasets splits will be the same
+
+- `--batch-size` - batch size (default: 64)
+- `--patience` - patience for early stopping (default: 30)
 
 ### Required for `resume` mode
 - `--mode`: 
     - `resume` - resume mode: for resuming interrupted experiment
 - `--path`:
-    - path to the interrupted experiment (e.g., `/Users/user/mlp_project/assets/logs/prefix-mode-model-ds`)
-- note that to resume experiments correctly you need to provide the same `-num-splits` and `--num-trials` as the ones used in the interrupted experiment (unless they are default)
+    - path to the interrupted experiment (e.g., `/Users/user/intro-dl-project/assets/logs/prefix-mode-model-ds`)
 
-## Running ST-DIM experiment
-`PYTHONPATH=./ python src/stdim/ts_stdim_experiments.py --mode tune --ds fbirn --max-epochs 200`
-
-## Running Window MLP experiment
-`PYTHONPATH=./ python src/scripts/window_mlp_experiments.py --mode tune --model window_mlp --model-mode NPT --model-decoder lstm --ds fbirn --max-epochs 200 --num-trials 10 --prefix test`
-
-PYTHONPATH=./ python src/scripts/window_mlp_experiments.py --mode tune --model window_mlp --model-mode NPT --model-decoder lstm --ds fbirn --max-epochs 200 --num-trials 10 --prefix test;
-PYTHONPATH=./ python src/scripts/window_mlp_experiments.py --mode experiment --model window_mlp --model-mode NPT --model-decoder lstm --ds fbirn --max-epochs 200 --num-trials 10 --prefix test;
-PYTHONPATH=./ python src/scripts/window_mlp_experiments.py --mode tune --model window_mlp --model-mode NPT --model-decoder tf --ds fbirn --max-epochs 200 --num-trials 10 --prefix test;
-PYTHONPATH=./ python src/scripts/window_mlp_experiments.py --mode experiment --model window_mlp --model-mode NPT --model-decoder tf --ds fbirn --max-epochs 200 --num-trials 10 --prefix test
-
-PYTHONPATH=./ python src/scripts/ts_dl_experiments.py --mode tune --model pe_transformer --ds fbirn --max-epochs 200 --num-trials 10;
-PYTHONPATH=./ python src/scripts/ts_dl_experiments.py --mode experiment --model pe_transformer --ds fbirn --max-epochs 200 --num-trials 10;
-PYTHONPATH=./ python src/scripts/ts_dl_experiments.py --mode tune --model pe_mlp --ds fbirn --max-epochs 200 --num-trials 10;
-PYTHONPATH=./ python src/scripts/ts_dl_experiments.py --mode experiment --model pe_mlp --ds fbirn --max-epochs 200 --num-trials 10;
-
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds fbirn --test-ds cobre bsnip --prefix fixed_cv; 
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds cobre --test-ds fbirn bsnip --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds bsnip --test-ds fbirn bsnip --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds oasis --test-ds adni --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds adni --test-ds oasis --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds fbirn_200 --prefix fixed_cv;
-
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds abide_869 --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds abide_roi --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds hcp --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds hcp_roi --prefix fixed_cv;
-PYTHONPATH=./ python src/scripts/fnc_lr_experiments.py --ds time_fbirn --prefix fixed_cv;

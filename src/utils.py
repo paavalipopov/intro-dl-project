@@ -1,44 +1,33 @@
+# pylint: disable=C0103
+"""Auxilary functions"""
+import os
+import json
+import glob
+import shutil
+
 import argparse
+from argparse import Namespace
 from apto.utils.misc import boolean_flag
 
+import torch
+from torch import nn
+import numpy as np
+
 models = [
-    "mlp",
-    "wide_mlp",
-    "deep_mlp",
-    "attention_mlp",
-    "new_attention_mlp",
-    "meta_mlp",
-    "pe_mlp",
     "lstm",
-    "noah_lstm",
+    "mean_lstm",
     "transformer",
     "mean_transformer",
-    "pe_transformer",
-    "stdim",
+    "dice",
 ]
 datasets = [
-    "oasis",
-    "adni",
     "abide",
-    "abide_869",
-    "abide_roi",
-    "fbirn",
-    "fbirn_100",
-    "fbirn_200",
-    "fbirn_400",
-    "fbirn_1000",
     "cobre",
-    "bsnip",
-    "hcp",
-    "hcp_roi",
-    "ukb",
-    "ukb_age_bins",
-    "time_fbirn",
 ]
 
 
 def get_argparser(sys_argv):
-    "Get params parser"
+    """Get args parser"""
     resume = "resume" in sys_argv
     tune = "tune" in sys_argv
 
@@ -49,12 +38,11 @@ def get_argparser(sys_argv):
         choices=[
             "tune",
             "exp",
-            "nested_exp",
             "resume",
         ],
         required=True,
         help="'tune' for model hyperparams tuning; \
-            'experiment' for experiments with tuned model; \
+            'exp' for experiments with tuned model; \
                 'resume' for resuming interrupted experiment",
     )
     parser.add_argument(
@@ -79,7 +67,6 @@ def get_argparser(sys_argv):
         required=not resume,
         help="Name of the dataset to use for training",
     )
-
     parser.add_argument(
         "--test-ds",
         nargs="*",
@@ -92,10 +79,18 @@ def get_argparser(sys_argv):
     boolean_flag(parser, "multiclass", default=False)
 
     # whehter dataset should be z-scored over time
-    boolean_flag(parser, "scaled", default=False)
+    boolean_flag(parser, "zscore", default=False)
 
     # whehter ICA components should be filtered
     boolean_flag(parser, "filter-indices", default=True)
+
+    # if you want to obtain or use single optimal set of hyperparams,
+    # pass --glob
+    boolean_flag(parser, "glob", default=False)
+
+    # if you want to keep checkpoints of trained models,
+    # pass --preserve-checkpoints
+    boolean_flag(parser, "preserve-checkpoints", default=not tune)
 
     parser.add_argument(
         "--prefix",
@@ -105,19 +100,14 @@ def get_argparser(sys_argv):
     )
 
     parser.add_argument(
-        "--num-trials",
+        "--n-trials",
         type=int,
         default=50 if tune else 10,
-        help="Number of trials to run on each test fold",
+        help="Number of trials to run on each test fold \
+            (default: 50 for 'tune', 10 for 'exp')",
     )
     parser.add_argument(
-        "--num-inner-trials",
-        type=int,
-        default=50,
-        help="Number of trials to run on each test fold for nested_exp runs",
-    )
-    parser.add_argument(
-        "--num-splits",
+        "--n-splits",
         type=int,
         default=5,
         help="Number of splits for StratifiedKFold (affects the number of test folds)",
@@ -127,7 +117,7 @@ def get_argparser(sys_argv):
         "--max-epochs",
         type=int,
         default=200,
-        help="Max number of epochs (min 30)",
+        help="Max number of epochs (default: 200)",
     )
     parser.add_argument(
         "--batch-size",
@@ -146,5 +136,102 @@ def get_argparser(sys_argv):
 
 
 def get_resumed_params(conf):
-    # path = conf.path
-    return None
+    # load experiment config
+    with open(f"{conf.path}/general_config.json", "r", encoding="utf8") as fp:
+        config = json.load(fp)
+
+    if config["mode"] == "tune":
+        try:
+            start_k = len(glob.glob(f"{conf.path}/k_*")) - 1
+            last_fold_dir = sorted(glob.glob(f"{conf.path}/k_*"))[-1]
+            try:
+                with open(last_fold_dir + "/runs.csv", "r", encoding="utf8") as fp:
+                    start_trial = len(fp.readlines()) - 1
+            except FileNotFoundError:
+                start_trial = 0
+            faildir = last_fold_dir + f"/trial_{start_trial:04d}"
+            print("Deleting interrupted run logs in " + faildir)
+            try:
+                shutil.rmtree(faildir)
+            except FileNotFoundError:
+                print("Could not delete interrupted run logs - FileNotFoundError")
+        except IndexError:
+            start_k, start_trial = 0, 0
+
+    elif config["mode"] == "exp":
+        with open(conf.path + "/runs.csv", "r", encoding="utf8") as fp:
+            lines = len(fp.readlines()) - 1
+            start_k = lines // config["n_trials"]
+            start_trial = lines - start_k * config["n_trials"]
+        faildir = conf.path + f"/k_{start_k:02d}/trial_{start_trial:04d}"
+        print("Deleting interrupted run logs in " + faildir)
+        try:
+            shutil.rmtree(faildir)
+        except FileNotFoundError:
+            print("Could not delete interrupted run logs - FileNotFoundError")
+
+    config = Namespace(**config)
+
+    return config, start_k, start_trial
+
+
+class EarlyStopping:
+    """Early stops the training if the given score does not improve after a given patience."""
+
+    def __init__(
+        self,
+        path: str,
+        minimize: bool,
+        patience: int = 30,
+    ):
+        assert minimize in [True, False]
+
+        self.path = path
+        self.minimize = minimize
+        self.patience = patience
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+
+    def __call__(self, new_score, model, epoch):
+        if self.best_score is None:
+            self.best_score = new_score
+            self.save_checkpoint(model)
+        else:
+            if self.minimize:
+                change = self.best_score - new_score
+            else:
+                change = new_score - self.best_score
+
+            if change > 0.0:
+                self.counter = 0
+                self.best_score = new_score
+                self.save_checkpoint(model)
+            else:
+                self.counter += 1
+                if self.counter >= self.patience:
+                    self.early_stop = True
+
+    def save_checkpoint(self, model):
+        # based on callback from animus package
+        """Saves model if criterion is met"""
+        if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
+            model = model.module
+
+        if issubclass(model.__class__, torch.nn.Module):
+            torch.save(model.state_dict(), self.path + "best_model.pt")
+        else:
+            torch.save(model, self.path + "best_model.pt")
+
+
+class NpEncoder(json.JSONEncoder):
+    """Numpy types wrapper for JSON.dump"""
+
+    def default(self, o):
+        if isinstance(o, np.integer):
+            return int(o)
+        if isinstance(o, np.floating):
+            return float(o)
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        return super(NpEncoder, self).default(o)
