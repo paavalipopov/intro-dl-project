@@ -6,7 +6,7 @@ conda activate introdl
 - if mac user:
     conda install pytorch torchvision torchaudio -c pytorch
 - else:
-    conda install pytorch torchvision torchaudio pytorch-cuda=11.6 -c pytorch -c nvidia
+    conda install pytorch torchvision torchaudio pytorch-cuda=11.3 -c pytorch -c nvidia
 pip install -r requirements.txt
 ```
 To download fMRI datasets, run
