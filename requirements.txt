@@ -3,3 +3,4 @@ h5py
 path
 wandb
 tqdm
+pylint

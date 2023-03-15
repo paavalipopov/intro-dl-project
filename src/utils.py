@@ -1,6 +1,5 @@
-# pylint: disable=C0103
+# pylint: disable=invalid-name
 """Auxilary functions"""
-import os
 import json
 import glob
 import shutil
@@ -13,17 +12,7 @@ import torch
 from torch import nn
 import numpy as np
 
-models = [
-    "lstm",
-    "mean_lstm",
-    "transformer",
-    "mean_transformer",
-    "dice",
-]
-datasets = [
-    "abide",
-    "cobre",
-]
+from src.settings import MODELS, DATASETS
 
 
 def get_argparser(sys_argv):
@@ -56,14 +45,14 @@ def get_argparser(sys_argv):
     parser.add_argument(
         "--model",
         type=str,
-        choices=models,
+        choices=MODELS,
         required=not resume,
         help="Name of the model to run",
     )
     parser.add_argument(
         "--ds",
         type=str,
-        choices=datasets,
+        choices=DATASETS,
         required=not resume,
         help="Name of the dataset to use for training",
     )
@@ -71,7 +60,7 @@ def get_argparser(sys_argv):
         "--test-ds",
         nargs="*",
         type=str,
-        choices=datasets,
+        choices=DATASETS,
         help="Additional datasets for testing",
     )
 
@@ -136,6 +125,7 @@ def get_argparser(sys_argv):
 
 
 def get_resumed_params(conf):
+    """Gather config and k/trial of interrupted experiment"""
     # load experiment config
     with open(f"{conf.path}/general_config.json", "r", encoding="utf8") as fp:
         config = json.load(fp)
@@ -234,4 +224,4 @@ class NpEncoder(json.JSONEncoder):
             return float(o)
         if isinstance(o, np.ndarray):
             return o.tolist()
-        return super(NpEncoder, self).default(o)
+        return super().default(o)

@@ -1,4 +1,4 @@
-# pylint: disable=C0103, W0632
+# pylint: disable=too-many-statements, too-many-locals, invalid-name, unbalanced-tuple-unpacking
 """Script for running experiments: tuning and testing hypertuned models"""
 import sys
 import os
@@ -168,7 +168,7 @@ def start(conf):
                 logger.finish()
 
     else:
-        raise NotImplementedError()
+        raise ValueError(f"{conf.model} is not recognized")
 
 
 if __name__ == "__main__":

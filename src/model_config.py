@@ -1,11 +1,16 @@
+# pylint: disable=invalid-name
+""" Model config factory"""
 import os
 import json
 import pandas as pd
+
+from numpy.random import default_rng
 
 from src.settings import LOGS_ROOT
 
 
 def model_config_factory(conf, k=None, path=None):
+    """Model config factory"""
     if conf.mode == "tune":
         model_config = get_tune_config(conf)
     elif conf.mode == "exp":
@@ -17,8 +22,7 @@ def model_config_factory(conf, k=None, path=None):
 
 
 def get_tune_config(conf):
-    from numpy.random import default_rng
-
+    """return random hyperparams for a model"""
     rng = default_rng()
 
     model_config = {}
@@ -49,10 +53,10 @@ def get_tune_config(conf):
 
     elif conf.model == "dice":
         # we might try to tune it, but it is not necessary
-        NotImplementedError("DICE model does not require tuning")
+        raise NotImplementedError("DICE model does not require tuning")
 
     else:
-        raise NotImplementedError(f"{conf.model} model is not recognized")
+        raise ValueError(f"{conf.model} model is not recognized")
 
     print("Tuning config:")
     print(model_config)
@@ -61,6 +65,7 @@ def get_tune_config(conf):
 
 
 def get_best_config(conf, k, path):
+    """return best hyperparams for a model, extracted authomatically or from the path"""
     assert k is not None or path is not None
 
     model_config = {}
@@ -98,5 +103,9 @@ def get_best_config(conf, k, path):
 
         return model_config
 
-    elif path is not None:
+    if path is not None:
         raise NotImplementedError("loading best hyperparams is not implemented yet")
+
+    raise ValueError(
+        "Can't return best model hyperparams if neither `path` nor `k` is provided"
+    )

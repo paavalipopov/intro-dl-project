@@ -1,4 +1,4 @@
-# pylint: disable=C0301, W0632
+# pylint: disable=line-too-long
 """Script for downloading fMRI datasets"""
 import requests
 

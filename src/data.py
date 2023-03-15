@@ -1,4 +1,4 @@
-# pylint: disable=C0103,C0115,C0116,R0913,E1121,C0301
+# pylint: disable=invalid-name, too-many-function-args
 """Functions for extracting dataset features and labels"""
 import h5py
 import numpy as np
@@ -51,17 +51,16 @@ def data_factory(conf):
 
 
 def data_postfactory(conf, model_config, original_data):
+    """
+    Post-process the raw dataset data according to model_config (like sliding window)
+    """
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
         return original_data, conf.data_info
     if conf.model == "dice":
         # TODO: implement
-        raise NotImplementedError(
-            f"'{conf.model}' model is not familiar to data_postfactory"
-        )
-    else:
-        raise NotImplementedError(
-            f"'{conf.model}' model is not familiar to data_postfactory"
-        )
+        raise NotImplementedError("DICE model data postprocessing is not implemented")
+
+    raise ValueError(f"'{conf.model}' model is not recognized")
 
 
 def load_dataset(conf, dataset):

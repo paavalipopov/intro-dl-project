@@ -3,7 +3,7 @@ import wandb
 
 
 def logger_factory(conf, model_config):
-    """Logger factory"""
+    """Basic logger factory"""
     logger = wandb.init(
         project=conf.project_name,
         name=conf.wandb_trial_name,

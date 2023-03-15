@@ -1,27 +1,28 @@
-# pylint: disable=C0115,C0103,C0116,R1725,R0913
+# pylint: disable=no-member, invalid-name, missing-function-docstring, missing-class-docstring
 """Models for experiments and functions for setting them up"""
 import numpy as np
 import torch
 from torch import nn
-import torch.nn.functional as F
 
 
 def model_factory(conf, model_config):
+    """Models factory"""
     if conf.model == "lstm":
         return LSTM(model_config)
-    elif conf.model == "mean_lstm":
+    if conf.model == "mean_lstm":
         return MeanLSTM(model_config)
-    elif conf.model == "transformer":
+    if conf.model == "transformer":
         return Transformer(model_config)
-    elif conf.model == "mean_transformer":
+    if conf.model == "mean_transformer":
         return MeanTransformer(model_config)
-    elif conf.model == "dice":
+    if conf.model == "dice":
         raise NotImplementedError()
 
-    raise NotImplementedError()
+    raise ValueError(f"{conf.model} is not recognized")
 
 
 # class PositionalEncoding(nn.Module):
+#    """Positional encoding in the form of module"""
 
 #     def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 5000):
 #         super().__init__()
@@ -43,6 +44,7 @@ def model_factory(conf, model_config):
 
 
 def positional_encoding(x, n=10000, scaled: bool = True):
+    """Positional encoding in the form of function"""
     bs, ln, fs = x.shape
     # bs: batch size
     # ln: length in time
@@ -75,7 +77,7 @@ def positional_encoding(x, n=10000, scaled: bool = True):
 
 class LSTM(nn.Module):
     def __init__(self, model_config):
-        super(LSTM, self).__init__()
+        super().__init__()
 
         input_size = int(model_config["input_size"])
         output_size = int(model_config["output_size"])
@@ -116,7 +118,7 @@ class LSTM(nn.Module):
 
 class MeanLSTM(nn.Module):
     def __init__(self, model_config):
-        super(MeanLSTM, self).__init__()
+        super().__init__()
 
         input_size = int(model_config["input_size"])
         output_size = int(model_config["output_size"])
@@ -150,7 +152,7 @@ class MeanLSTM(nn.Module):
 
 class Transformer(nn.Module):
     def __init__(self, model_config):
-        super(Transformer, self).__init__()
+        super().__init__()
 
         input_size = int(model_config["input_size"])
         output_size = int(model_config["output_size"])
@@ -186,7 +188,7 @@ class Transformer(nn.Module):
         )
 
     def forward(self, x):
-        # x.shape = [Batch_size; time_len; n_channels]
+        # x.shape: [Batch_size; time_len; n_channels]
 
         if self.post:
             input_embed = self.input_embed(x)
@@ -204,7 +206,7 @@ class Transformer(nn.Module):
 
 class MeanTransformer(nn.Module):
     def __init__(self, model_config):
-        super(MeanTransformer, self).__init__()
+        super().__init__()
 
         input_size = int(model_config["input_size"])
         output_size = int(model_config["output_size"])
@@ -240,7 +242,7 @@ class MeanTransformer(nn.Module):
         )
 
     def forward(self, x):
-        # x.shape = [Batch_size; time_len; n_channels]
+        # x.shape: [Batch_size; time_len; n_channels]
 
         if self.post:
             input_embed = self.input_embed(x)

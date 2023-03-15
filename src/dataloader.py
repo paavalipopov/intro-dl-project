@@ -1,5 +1,5 @@
-import numpy as np
-
+# pylint: disable=no-member, invalid-name, too-many-locals, too-many-arguments
+""" Scripts for creating dataloaders """
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
 import torch
@@ -7,20 +7,22 @@ from torch.utils.data import DataLoader, TensorDataset
 
 
 def dataloader_factory(conf, data, outer_k, trial, inner_k=None):
-    """Return dataloaders"""
+    """Return dataloaders according to the used model"""
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
         dataloaders = common_dataloader(conf, data, outer_k, trial, inner_k)
     elif conf.model == "dice":
         dataloaders = dice_dataloader(conf, data, outer_k, trial, inner_k)
     else:
-        raise NotImplementedError(
-            f"'{conf.model}' model is not familiar to dataloader_factory"
-        )
+        raise ValueError(f"'{conf.model}' model is not recognized")
 
     return dataloaders
 
 
-def common_dataloader(conf, data, outer_k, trial, inner_k):
+def common_dataloader(conf, data, outer_k, trial, inner_k=None):
+    """
+    Most generic dataloaders, returns time-series data and labels,
+    split into train/val/test sets
+    """
     skf = StratifiedKFold(n_splits=conf.n_splits, shuffle=True, random_state=42)
     CV_folds = list(skf.split(data["main"]["features"], data["main"]["labels"]))
 
@@ -105,4 +107,5 @@ def common_dataloader(conf, data, outer_k, trial, inner_k):
 
 
 def dice_dataloader(conf, model_config, data, outer_k, trial, inner_k=None):
+    """return DICE model dataloders"""
     raise NotImplementedError()

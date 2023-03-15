@@ -1,4 +1,4 @@
-# pylint: disable=W0201,W0223,C0103,C0115,C0116,R0902,E1101,R0914
+# pylint: disable=no-member, too-many-locals, too-many-arguments, too-many-instance-attributes, invalid-name, attribute-defined-outside-init
 """Training scripts"""
 import os
 import json
@@ -16,17 +16,20 @@ from src.utils import EarlyStopping, NpEncoder
 def trainer_factory(
     conf, model_config, dataloaders, model, optimizer, criterion, logger
 ):
+    """Trainer factory"""
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
         return Trainer(
             vars(conf), model_config, dataloaders, model, optimizer, criterion, logger
         )
-    elif conf.model == "dice":
+    if conf.model == "dice":
         raise NotImplementedError()
-    else:
-        raise NotImplementedError()
+
+    raise ValueError(f"{conf.model} is not recognized")
 
 
 class Trainer:
+    """Basic training script"""
+
     def __init__(
         self,
         conf,
@@ -46,7 +49,8 @@ class Trainer:
         self.criterion = criterion
         self.logger = logger
 
-        self.params = self.count_params(self.model)
+        params = self.count_params(self.model)
+        self.logger.summary["params"] = params
 
         self.epochs = self.config["max_epochs"]
         self.save_path = self.config["run_dir"]
@@ -85,6 +89,7 @@ class Trainer:
         return total_params
 
     def run_epoch(self, ds_name):
+        """Run single epoch on `ds_name` dataloder"""
         is_train_dataset = ds_name == "train"
 
         all_scores, all_targets = [], []
@@ -132,6 +137,7 @@ class Trainer:
         return metrics
 
     def train(self):
+        """Start training"""
         start_time = time.time()
 
         for epoch in tqdm(range(self.epochs)):
@@ -152,6 +158,7 @@ class Trainer:
         self.logger.summary["training_time"] = elapsed_time
 
     def test(self):
+        """Start testing"""
         for key in self.dataloaders:
             if key not in ["train", "valid"]:
                 results = self.run_epoch(key)
@@ -161,6 +168,7 @@ class Trainer:
         self.logger.log(self.test_results)
 
     def run(self):
+        """Run training script"""
         print("Training model")
         self.train()
 
