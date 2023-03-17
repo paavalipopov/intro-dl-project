@@ -23,7 +23,7 @@ items = [
     ),
     (
         "https://raw.githubusercontent.com/UsmanMahmood27/MILC/master/IndicesAndLabels/labels_COBRE.csv",
-        DATA_ROOT.joinpath("cobre/correct_indices_GSP.csv"),
+        DATA_ROOT.joinpath("cobre/labels_COBRE.csv"),
     ),
     (
         "https://raw.githubusercontent.com/UsmanMahmood27/MILC/master/IndicesAndLabels/correct_indices_GSP.csv",
