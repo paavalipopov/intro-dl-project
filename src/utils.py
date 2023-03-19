@@ -12,7 +12,7 @@ import torch
 from torch import nn
 import numpy as np
 
-from src.settings import MODELS, DATASETS, WEIGHTS_ROOT, INTROSPECTION_ROOT
+from src.settings import MODELS, DATASETS
 
 
 def get_argparser(sys_argv):
