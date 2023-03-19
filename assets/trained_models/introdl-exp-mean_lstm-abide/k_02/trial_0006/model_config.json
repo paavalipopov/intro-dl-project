@@ -1,0 +1,10 @@
+{
+  "lr": 2.9770090829960802e-05,
+  "hidden_size": 204,
+  "num_layers": 3,
+  "bidirectional": false,
+  "dropout": 0.382192539746793,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-abide/runs/hie1trcm"
+}

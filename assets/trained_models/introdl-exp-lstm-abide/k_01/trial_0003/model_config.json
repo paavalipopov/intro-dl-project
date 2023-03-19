@@ -1,0 +1,10 @@
+{
+  "lr": 0.0001136470098108477,
+  "hidden_size": 106,
+  "num_layers": 2,
+  "bidirectional": true,
+  "dropout": 0.8852398654373782,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-lstm-abide/runs/xnlwewpg"
+}
