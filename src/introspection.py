@@ -1,4 +1,4 @@
-# pylint: disable=
+# pylint: disable=invalid-name, too-few-public-methods, no-member, unpacking-non-sequence
 """Introspection scripts"""
 import os
 import json
@@ -52,11 +52,12 @@ class Introspector:
         with open(f"{self.save_path}model_config.json", "w", encoding="utf8") as fp:
             json.dump(self.model_config, fp, indent=2, cls=NpEncoder)
 
-    def run(self):
+    def run(self, cutoff):
+        """Run introspection, save results"""
         for i, (feature, target) in enumerate(
             zip(self.dataloaders["features"], self.dataloaders["labels"])
         ):
-            if i >= 10:
+            if i >= cutoff:
                 break
 
             feature = feature.unsqueeze(0)
@@ -93,7 +94,7 @@ class Introspector:
                 else:
                     raise ValueError(f"'{method}' methods is not recognized")
 
-                # plot data
+                # plot colormaps
                 fig, axs = plt.subplots(1, 1, figsize=(13, 5))
                 # data needs to be transposed to [num_features; time_len; 1]
                 _ = viz.visualize_image_attr(
@@ -113,12 +114,7 @@ class Introspector:
                 )
                 plt.close()
 
-                # bar charts
-                # threshold = np.sort(grads.detach().numpy().ravel())[
-                #     -cutoff
-                # ]  # get the nth largest value
-                # idx = grads < threshold
-                # grads[idx] = 0
+                # bar charts: summarizes gradients at each time point
 
                 plt.bar(
                     range(feature.shape[1]),
