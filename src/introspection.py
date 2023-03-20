@@ -96,7 +96,6 @@ class Introspector:
                 # plot data
                 fig, axs = plt.subplots(1, 1, figsize=(13, 5))
                 # data needs to be transposed to [num_features; time_len; 1]
-                # TODO: fix captum-matplotlib conflict
                 _ = viz.visualize_image_attr(
                     np.transpose(grads.cpu().detach().numpy(), (2, 1, 0)),
                     np.transpose(feature.cpu().detach().numpy(), (2, 1, 0)),
@@ -114,64 +113,25 @@ class Introspector:
                 )
                 plt.close()
 
-                # fig, axs = plt.subplots(1, 1, figsize=(21, 9))
-                # _ = viz.visualize_image_attr(
-                #     np.transpose(grads.cpu().detach().numpy(), (2, 1, 0)),
-                #     np.transpose(feature.cpu().detach().numpy(), (2, 1, 0)),
-                #     method="heat_map",
-                #     cmap="inferno",
-                #     show_colorbar=False,
-                #     plt_fig_axis=(fig, axs),
-                #     use_pyplot=False,
-                # )
-                # plt.savefig(
-                #     self.image_path.joinpath(f"{method}/colormap/{i:04d}.1.png"),
-                #     format="png",
-                #     dpi=300,
-                # )
-                # plt.close()
-
-                # # bar charts
-                # threshold0 = np.sort(grads.detach().numpy().ravel())[
+                # bar charts
+                # threshold = np.sort(grads.detach().numpy().ravel())[
                 #     -cutoff
                 # ]  # get the nth largest value
-                # idx = grads < threshold0
+                # idx = grads < threshold
                 # grads[idx] = 0
 
-                # threshold1 = np.sort(grads1.detach().numpy().ravel())[
-                #     -cutoff
-                # ]  # get the nth largest value
-                # idx = grads1 < threshold1
-                # grads1[idx] = 0
-
-                # plt.bar(
-                #     range(time_range),
-                #     np.sum(grads0.cpu().detach().numpy(), axis=(0, 2)),
-                #     align="center",
-                #     color="blue",
-                # )
-                # plt.xlim([0, time_range])
-                # plt.grid(False)
-                # plt.axis("off")
-                # plt.savefig(
-                #     self.image_path.joinpath(f"{method}/barchart/{i:04d}.0.png"),
-                #     format="png",
-                #     dpi=300,
-                # )
-                # plt.close()
-
-                # plt.bar(
-                #     range(time_range),
-                #     np.sum(grads1.cpu().detach().numpy(), axis=(0, 2)),
-                #     align="center",
-                #     color="red",
-                # )
-                # plt.xlim([0, time_range])
-                # plt.grid(False)
-                # plt.axis("off")
-                # plt.savefig(
-                #     self.image_path.joinpath(f"{method}/barchart/{i:04d}.1.png"),
-                #     format="png",
-                #     dpi=300,
-                # )
-                # plt.close()
+                plt.bar(
+                    range(feature.shape[1]),
+                    np.sum(grads.cpu().detach().numpy(), axis=(0, 2)),
+                    align="center",
+                    color="blue",
+                )
+                plt.xlim([0, feature.shape[1]])
+                plt.grid(False)
+                plt.axis("off")
+                plt.savefig(
+                    f"{self.save_path}/{method}/barchart/{i:04d}_target_{target}.png",
+                    format="png",
+                    dpi=300,
+                )
+                plt.close()

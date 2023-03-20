@@ -5,3 +5,4 @@ wandb
 tqdm
 pylint
 captum
+matplotlib==3.6.3  
