@@ -73,6 +73,14 @@ def load_dataset(conf, dataset):
         data, labels = load_ABIDE1(filter_indices=conf.filter_indices)
     elif dataset == "cobre":
         data, labels = load_COBRE(filter_indices=conf.filter_indices)
+    elif dataset == "synth1":
+        data = np.load(f"{DATA_ROOT}/synth1/data.npz")
+        labels = data["labels"]
+        data = data["data"]
+    elif dataset == "synth2":
+        data = np.load(f"{DATA_ROOT}/synth2/data.npz")
+        labels = data["labels"]
+        data = data["data"]
     else:
         raise NotImplementedError(f"'{dataset}' dataset is not found")
 

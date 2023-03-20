@@ -22,4 +22,6 @@ MODELS = [
 DATASETS = [
     "abide",
     "cobre",
+    "synth1",
+    "synth2",
 ]
