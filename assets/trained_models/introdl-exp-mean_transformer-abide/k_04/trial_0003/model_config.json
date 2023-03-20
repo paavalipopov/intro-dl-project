@@ -1,0 +1,12 @@
+{
+  "lr": 0.00016788452022638905,
+  "head_hidden_size": 4,
+  "num_heads": 4,
+  "num_layers": 2,
+  "dropout": 0.33260037111249013,
+  "scaled": false,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-abide/runs/focw78u1"
+}

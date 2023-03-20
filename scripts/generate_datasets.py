@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
+# pylint: disable=line-too-long
 """
 Script for generating synthetic datasets
 """
 
 import os
-import numpy as np
 import random
 import math
+import numpy as np
 
 from src.settings import DATA_ROOT
 

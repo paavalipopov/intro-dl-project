@@ -6,7 +6,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 
-def dataloader_factory(conf, data, outer_k, trial, inner_k=None):
+def dataloader_factory(conf, data, outer_k, trial=None, inner_k=None):
     """Return dataloaders according to the used model"""
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
         dataloaders = common_dataloader(conf, data, outer_k, trial, inner_k)
@@ -18,7 +18,7 @@ def dataloader_factory(conf, data, outer_k, trial, inner_k=None):
     return dataloaders
 
 
-def common_dataloader(conf, data, outer_k, trial, inner_k=None):
+def common_dataloader(conf, data, outer_k, trial=None, inner_k=None):
     """
     Most generic dataloaders, returns time-series data and labels,
     split into train/val/test sets
@@ -36,6 +36,12 @@ def common_dataloader(conf, data, outer_k, trial, inner_k=None):
         data["main"]["labels"][train_index],
         data["main"]["labels"][test_index],
     )
+
+    if conf.mode == "introspection":
+        return {
+            "features": torch.tensor(X_test, dtype=torch.float32),
+            "labels": torch.tensor(y_test, dtype=torch.int64),
+        }
 
     if conf.mode == "tune" and not conf.glob:
         # tune mode should be completely unaware of the test set

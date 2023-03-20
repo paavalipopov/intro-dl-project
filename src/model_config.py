@@ -15,6 +15,8 @@ def model_config_factory(conf, k=None, path=None):
         model_config = get_tune_config(conf)
     elif conf.mode == "exp":
         model_config = get_best_config(conf, k, path)
+    elif conf.mode == "introspection":
+        model_config = get_introspection_config(conf, k)
     else:
         raise NotImplementedError
 
@@ -76,12 +78,12 @@ def get_best_config(conf, k, path):
 
         searched_dir = conf.project_name.split("-")
         searched_dir = "-".join(searched_dir[2:4])
-        serached_dir = f"tune-{searched_dir}"
+        searched_dir = f"tune-{searched_dir}"
         if conf.prefix != conf.default_prefix:
-            serached_dir = f"{conf.prefix}-{serached_dir}"
-        print(f"Searching trained model in {LOGS_ROOT}/*{serached_dir}")
+            searched_dir = f"{conf.prefix}-{searched_dir}"
+        print(f"Searching trained model in {LOGS_ROOT}/*{searched_dir}")
         for logdir in os.listdir(LOGS_ROOT):
-            if logdir.endswith(serached_dir):
+            if logdir.endswith(searched_dir):
                 exp_dirs.append(os.path.join(LOGS_ROOT, logdir))
 
         # if multiple run files found, choose the latest
@@ -109,3 +111,23 @@ def get_best_config(conf, k, path):
     raise ValueError(
         "Can't return best model hyperparams if neither `path` nor `k` is provided"
     )
+
+
+def get_introspection_config(conf, k):
+    """return best hyperparams for a model, extracted authomatically or from the path"""
+    assert k is not None
+
+    model_config = {}
+    # get best config of the k`th fold`
+    df = pd.read_csv(f"{conf.weights_dir}/runs.csv", delimiter=",", index_col=False)
+    # pick hyperparams of a model with the highest test_score
+    best_trial = df["test_score"][k * conf.n_trials : (k + 1) * conf.n_trials].idxmax()
+    best_trial = best_trial - k * conf.n_trials
+
+    best_config_dir = f"{conf.weights_dir}/k_{k:02d}/trial_{best_trial:04d}/"
+    with open(f"{best_config_dir}model_config.json", "r", encoding="utf8") as fp:
+        model_config = json.load(fp)
+
+    model_config["weights_path"] = f"{best_config_dir}best_model.pt"
+
+    return model_config

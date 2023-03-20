@@ -1,0 +1,21 @@
+{
+  "mode": "exp",
+  "path": null,
+  "model": "transformer",
+  "ds": "abide",
+  "test_ds": null,
+  "multiclass": false,
+  "zscore": false,
+  "filter_indices": true,
+  "glob": false,
+  "preserve_checkpoints": true,
+  "prefix": "introdl",
+  "n_trials": 10,
+  "n_splits": 5,
+  "max_epochs": 200,
+  "batch_size": 64,
+  "patience": 30,
+  "default_prefix": "230316.052103",
+  "project_name": "introdl-exp-transformer-abide",
+  "project_dir": "/data/users2/ppopov1/intro-dl-project/assets/logs/introdl-exp-transformer-abide/"
+}

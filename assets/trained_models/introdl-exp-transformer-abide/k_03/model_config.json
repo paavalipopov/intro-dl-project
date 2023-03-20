@@ -1,0 +1,12 @@
+{
+  "lr": 1.0188968028134346e-05,
+  "head_hidden_size": 95,
+  "num_heads": 1,
+  "num_layers": 2,
+  "dropout": 0.8856296269646242,
+  "scaled": true,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-transformer-abide/runs/fj8ky9fl"
+}

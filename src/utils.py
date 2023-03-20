@@ -124,6 +124,68 @@ def get_argparser(sys_argv):
     return parser
 
 
+def get_introspection_argparser():
+    """Get args parser for introspection"""
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["introspection"],
+        default="introspection",
+        help="'introspection' for model introspection",
+    )
+    parser.add_argument(
+        "--methods",
+        nargs="+",
+        choices=["saliency", "ig", "ignt"],
+        default=["saliency", "ig", "ignt"],
+    )
+    parser.add_argument(
+        "--model",
+        type=str,
+        choices=MODELS,
+        required=True,
+        help="Name of the model to run",
+    )
+    parser.add_argument(
+        "--ds",
+        type=str,
+        choices=DATASETS,
+        required=True,
+        help="Name of the dataset to use for training",
+    )
+    parser.add_argument(
+        "--test-ds",
+        nargs="*",
+        type=str,
+        choices=DATASETS,
+        help="Additional datasets for testing",
+    )
+
+    # some datasets have multiple classes; set to true if you want to load all classes
+    boolean_flag(parser, "multiclass", default=False)
+
+    # whehter dataset should be z-scored over time
+    boolean_flag(parser, "zscore", default=False)
+
+    # whehter ICA components should be filtered
+    boolean_flag(parser, "filter-indices", default=True)
+
+    # if you want to obtain or use single optimal set of hyperparams,
+    # pass --glob
+    boolean_flag(parser, "glob", default=False)
+
+    parser.add_argument(
+        "--prefix",
+        type=str,
+        help="Prefix for the project name (body of the project name \
+            is '$mode-$model-$dataset'): default: UTC time",
+    )
+
+    return parser
+
+
 def get_resumed_params(conf):
     """Gather config and k/trial of interrupted experiment"""
     # load experiment config
@@ -163,6 +225,15 @@ def get_resumed_params(conf):
     config = Namespace(**config)
 
     return config, start_k, start_trial
+
+
+def get_introspection_params(conf):
+    """Gather n_splits and n_trials of trained model for introspection"""
+    # load experiment config
+    with open(f"{conf.weights_dir}general_config.json", "r", encoding="utf8") as fp:
+        config = json.load(fp)
+
+    return config["n_splits"], config["n_trials"]
 
 
 class EarlyStopping:
