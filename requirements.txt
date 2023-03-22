@@ -1,8 +1,9 @@
-apto==0.0.2
+apto
 h5py
 path
 wandb
 tqdm
 pylint
 captum
-matplotlib==3.6.3  
+matplotlib==3.6.3
+ipykernel
