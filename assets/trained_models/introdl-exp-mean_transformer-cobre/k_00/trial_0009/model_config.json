@@ -1,0 +1,12 @@
+{
+  "lr": 0.0003975724575537893,
+  "head_hidden_size": 4,
+  "num_heads": 3,
+  "num_layers": 3,
+  "dropout": 0.5261955112122584,
+  "scaled": true,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-cobre/runs/eegichru"
+}

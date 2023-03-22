@@ -1,0 +1,10 @@
+{
+  "lr": 0.00011424536954432113,
+  "hidden_size": 215,
+  "num_layers": 3,
+  "bidirectional": true,
+  "dropout": 0.7559733957201531,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-lstm-cobre/runs/a6hm72tp"
+}

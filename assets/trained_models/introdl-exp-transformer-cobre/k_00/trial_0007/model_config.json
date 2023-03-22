@@ -1,0 +1,12 @@
+{
+  "lr": 8.542980370591681e-05,
+  "head_hidden_size": 99,
+  "num_heads": 4,
+  "num_layers": 1,
+  "dropout": 0.13731948461861831,
+  "scaled": false,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-transformer-cobre/runs/o0kebp90"
+}

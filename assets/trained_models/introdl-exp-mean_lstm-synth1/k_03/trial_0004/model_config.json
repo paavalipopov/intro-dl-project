@@ -1,0 +1,10 @@
+{
+  "lr": 8.842132313372864e-05,
+  "hidden_size": 93,
+  "num_layers": 3,
+  "bidirectional": true,
+  "dropout": 0.6090508150143054,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-synth1/runs/cm5ucyln"
+}

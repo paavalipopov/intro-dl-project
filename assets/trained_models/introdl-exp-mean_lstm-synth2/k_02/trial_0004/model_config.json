@@ -1,0 +1,10 @@
+{
+  "lr": 1.3891427706012617e-05,
+  "hidden_size": 160,
+  "num_layers": 1,
+  "bidirectional": true,
+  "dropout": 0.17100780291412915,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-synth2/runs/f30mlfbz"
+}

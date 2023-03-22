@@ -1,0 +1,10 @@
+{
+  "lr": 3.73298986886389e-05,
+  "hidden_size": 246,
+  "num_layers": 4,
+  "bidirectional": false,
+  "dropout": 0.5329876092590548,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-lstm-synth1/runs/x7854rsd"
+}

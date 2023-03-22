@@ -1,0 +1,10 @@
+{
+  "lr": 0.000707503518252914,
+  "hidden_size": 187,
+  "num_layers": 2,
+  "bidirectional": false,
+  "dropout": 0.8661479886074227,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-cobre/runs/dck5587f"
+}

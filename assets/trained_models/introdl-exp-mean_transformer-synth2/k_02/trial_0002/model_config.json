@@ -1,0 +1,12 @@
+{
+  "lr": 0.0002643297423025885,
+  "head_hidden_size": 66,
+  "num_heads": 2,
+  "num_layers": 3,
+  "dropout": 0.28292351963964935,
+  "scaled": false,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-synth2/runs/nsal83jr"
+}

@@ -1,0 +1,12 @@
+{
+  "lr": 1.0374303323812017e-05,
+  "head_hidden_size": 34,
+  "num_heads": 3,
+  "num_layers": 2,
+  "dropout": 0.6045427730407484,
+  "scaled": true,
+  "post": true,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-transformer-cobre/runs/j087gvp5"
+}

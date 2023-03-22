@@ -1,0 +1,10 @@
+{
+  "lr": 6.31101511944563e-05,
+  "hidden_size": 205,
+  "num_layers": 3,
+  "bidirectional": false,
+  "dropout": 0.7968614041201668,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-synth2/runs/4a12bt20"
+}

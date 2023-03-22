@@ -1,0 +1,12 @@
+{
+  "lr": 7.335101195384146e-05,
+  "head_hidden_size": 72,
+  "num_heads": 2,
+  "num_layers": 2,
+  "dropout": 0.30653414857913736,
+  "scaled": true,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-cobre/runs/2cx6oj98"
+}

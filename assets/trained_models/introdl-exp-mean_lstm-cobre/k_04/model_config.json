@@ -1,0 +1,10 @@
+{
+  "lr": 7.034394628282215e-05,
+  "hidden_size": 222,
+  "num_layers": 4,
+  "bidirectional": false,
+  "dropout": 0.5290736717155486,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-cobre/runs/dtjvhm3f"
+}
