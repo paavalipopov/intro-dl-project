@@ -55,9 +55,9 @@ class Introspector:
             json.dump(self.model_config, fp, indent=2, cls=NpEncoder)
 
     def run(self, cutoff):
+        """Run introspection, save results"""
         counter = np.zeros_like(np.unique(self.dataloaders["labels"]))
 
-        """Run introspection, save results"""
         for i in range(self.dataloaders["labels"].shape[0]):
             target = self.dataloaders["labels"][i]
             counter[target] += 1
