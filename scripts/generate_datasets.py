@@ -8,6 +8,8 @@ import random
 import math
 import numpy as np
 
+random.seed(42)
+
 from src.settings import DATA_ROOT
 
 dataset0 = np.empty([100, 53, 140])
