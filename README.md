@@ -15,10 +15,11 @@ PYTHONPATH=./ python scripts/download_datasets.py
 ```
 
 # Examples
+## Training
 ```
 for model in lstm mean_lstm transformer mean_transformer
 do
-    for dataset in cobre abide
+    for dataset in cobre abide synth1 synth2
     do
         PYTHONPATH=./ python scripts/run_experiments.py --mode tune --model $model --ds $dataset --prefix test
         PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model $model --ds $dataset --prefix test
@@ -31,7 +32,22 @@ PYTHONPATH=./ python scripts/run_experiments.py --mode tune --model lstm --ds ab
 PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model lstm --ds abide --prefix test
 
 ```
+## Introspection
+For model introspection to work you need to move (or copy) the `exp` folder of the desired model from the `assets/logs` to `assets/trained_models`.
 
+```
+for model in lstm mean_lstm transformer mean_transformer
+do
+    for dataset in cobre abide synth1 synth2
+    do
+        PYTHONPATH=./ python scripts/run_introspection.py --model $model --ds $dataset --prefix test
+    done
+done
+```
+or
+```
+PYTHONPATH=./ python scripts/run_introspection.py --model lstm --ds abide --prefix test
+```
 ## Options for `scripts/run_experiments.py`
 
 ### Required
