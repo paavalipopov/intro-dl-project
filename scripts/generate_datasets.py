@@ -42,7 +42,7 @@ dataset1 = np.empty([100, 53, 140])
 mask1 = np.zeros(dataset1.shape)
 label1 = np.ones(dataset1.shape[0])
 for j in range(100):
-    sign = np.sign(random.uniform(0, 1))
+    sign = np.sign(random.uniform(-1, 1))
     random_shift = int(sign * random.uniform(10, 20))
     for i in range(53):
         noise = np.random.normal(0, 1, T)
