@@ -105,7 +105,6 @@ for j in range(100):
                 dataset0[j][i][t] = (
                     C_i + a_i * ((T / 2) - t) + math.sin(omega_i * t + phi_i) + noise[t]
                 )
-        mask0[j][i][int(T / 2)] = 1
 
 dataset1 = np.empty([100, 53, 140])
 mask1 = np.zeros(dataset1.shape)
@@ -140,7 +139,7 @@ for j in range(100):
 
             if t == 2 * i:
                 dataset1[j][i][t] = -dataset1[j][i][t]
-        mask1[j][i][int(T / 2 + random_shift)] = 1
+                mask1[j][i][t] = 1
 
 data = np.concatenate((dataset0, dataset1))
 mask = np.concatenate((mask0, mask1))
