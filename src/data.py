@@ -68,6 +68,8 @@ def load_dataset(conf, dataset):
     Return the dataset defined by 'dataset'.
     Shape: [subjects, time, components]
     """
+    # transparency mask: used for introspection
+    mask = None
 
     if dataset == "abide":
         data, labels = load_ABIDE1(filter_indices=conf.filter_indices)
@@ -76,17 +78,29 @@ def load_dataset(conf, dataset):
     elif dataset == "synth1":
         data = np.load(f"{DATA_ROOT}/synth1/data.npz")
         labels = data["labels"]
+        mask = data["masks"]
         data = data["data"]
     elif dataset == "synth2":
         data = np.load(f"{DATA_ROOT}/synth2/data.npz")
         labels = data["labels"]
+        # mask = data["masks"]
         data = data["data"]
+
+        ###
+        mask = np.zeros_like(data)
+        for i in range(mask.shape[0] // 2, mask.shape[0]):
+            for j in range(mask.shape[1]):
+                for k in range(mask.shape[2]):
+                    if k == 2 * j:
+                        mask[i, j, k] = 1
     else:
         raise NotImplementedError(f"'{dataset}' dataset is not found")
 
     data = np.swapaxes(data, 1, 2)  # new: [subjects, time, components]
+    if mask is not None:
+        mask = np.swapaxes(mask, 1, 2)
 
-    return {"features": data, "labels": labels}
+    return {"features": data, "labels": labels, "mask": mask}
 
 
 def load_ABIDE1(

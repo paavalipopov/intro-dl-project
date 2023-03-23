@@ -35,8 +35,10 @@ class Introspector:
         self.methods = conf["methods"]
         self.save_path = conf["run_dir"]
         self.model_config = model_conf
-        self.dataloaders = dataloaders
         self.model = model
+
+        self.has_mask = dataloaders["mask"] is not None
+        self.dataloaders = dataloaders
 
         if "saliency" in self.methods:
             os.makedirs(f"{self.save_path}saliency/colormap", exist_ok=True)
@@ -53,15 +55,19 @@ class Introspector:
             json.dump(self.model_config, fp, indent=2, cls=NpEncoder)
 
     def run(self, cutoff):
-        """Run introspection, save results"""
-        for i, (feature, target) in enumerate(
-            zip(self.dataloaders["features"], self.dataloaders["labels"])
-        ):
-            if i >= cutoff:
-                break
+        counter = np.zeros_like(np.unique(self.dataloaders["labels"]))
 
-            feature = feature.unsqueeze(0)
+        """Run introspection, save results"""
+        for i in range(self.dataloaders["labels"].shape[0]):
+            target = self.dataloaders["labels"][i]
+            counter[target] += 1
+            if counter[target] >= cutoff:
+                continue
+
+            feature = self.dataloaders["features"][i].unsqueeze(0)
             feature.requires_grad = True
+            if self.has_mask:
+                mask = self.dataloaders["mask"][i].unsqueeze(0)
 
             for method in self.methods:
                 # get data
@@ -107,10 +113,17 @@ class Introspector:
                     use_pyplot=False,
                 )
 
+                if self.has_mask:
+                    axs.imshow(
+                        np.transpose(mask.cpu().detach().numpy(), (2, 1, 0)),
+                        alpha=0.5,
+                        cmap="gist_gray",
+                    )
                 plt.savefig(
-                    f"{self.save_path}/{method}/colormap/{i:04d}_target_{target}.png",
-                    format="png",
-                    dpi=300,
+                    f"{self.save_path}/{method}/colormap/{i:04d}_target_{target}.eps",
+                    format="eps",
+                    # dpi=300,
+                    bbox_inches="tight",
                 )
                 plt.close()
 
@@ -120,14 +133,15 @@ class Introspector:
                     range(feature.shape[1]),
                     np.sum(grads.cpu().detach().numpy(), axis=(0, 2)),
                     align="center",
-                    color="blue",
+                    color="blue" if target == 0 else "red",
                 )
                 plt.xlim([0, feature.shape[1]])
                 plt.grid(False)
                 plt.axis("off")
                 plt.savefig(
-                    f"{self.save_path}/{method}/barchart/{i:04d}_target_{target}.png",
-                    format="png",
-                    dpi=300,
+                    f"{self.save_path}/{method}/barchart/{i:04d}_target_{target}.eps",
+                    format="eps",
+                    # dpi=300,
+                    bbox_inches="tight",
                 )
                 plt.close()

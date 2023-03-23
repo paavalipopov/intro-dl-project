@@ -38,9 +38,15 @@ def common_dataloader(conf, data, outer_k, trial=None, inner_k=None):
     )
 
     if conf.mode == "introspection":
+        if data["main"]["mask"] is not None:
+            mask = data["main"]["mask"][test_index]
+            mask = torch.tensor(mask, dtype=torch.float32)
+        else:
+            mask = None
         return {
             "features": torch.tensor(X_test, dtype=torch.float32),
             "labels": torch.tensor(y_test, dtype=torch.int64),
+            "mask": mask,
         }
 
     if conf.mode == "tune" and not conf.glob:
