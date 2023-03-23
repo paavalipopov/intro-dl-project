@@ -40,13 +40,13 @@ for model in lstm mean_lstm transformer mean_transformer
 do
     for dataset in cobre abide synth1 synth2
     do
-        PYTHONPATH=./ python scripts/run_introspection.py --model $model --ds $dataset --prefix introdl
+        PYTHONPATH=./ python scripts/run_introspection.py --model $model --ds $dataset --methods saliency --prefix introdl
     done
 done
 ```
 or
 ```
-PYTHONPATH=./ python scripts/run_introspection.py --model lstm --ds abide --prefix introdl
+PYTHONPATH=./ python scripts/run_introspection.py --model lstm --ds abide --methods saliency --prefix introdl
 ```
 ## Options for `scripts/run_experiments.py`
 

@@ -53,7 +53,7 @@ def start(conf):
             dataloaders,
             model,
         )
-        introspector.run(cutoff=10)
+        introspector.run(cutoff=1)
 
 
 if __name__ == "__main__":

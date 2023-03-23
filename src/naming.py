@@ -77,6 +77,7 @@ def introspection_project_name(conf):
 
         # if multiple run files found, choose the latest
         weights_dir = sorted(dirs)[-1]
+        weights_dir += "/"
         print(f"Using trained model from {weights_dir}")
 
     return proj_name, project_dir, weights_dir
