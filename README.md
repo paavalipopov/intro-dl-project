@@ -13,6 +13,10 @@ To download fMRI datasets, run
 ```
 PYTHONPATH=./ python scripts/download_datasets.py
 ```
+To generate synthetics datasets, run
+```
+PYTHONPATH=./ python scripts/generate_datasets.py
+```
 
 # Examples
 ## Training
@@ -33,7 +37,7 @@ PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model lstm --ds abi
 
 ```
 ## Introspection
-For model introspection to work you need to move (or copy) the `exp` folder of the desired model from the `assets/logs` to `assets/trained_models`. Choose the same `--prefix` as the prefix of your desired model's folder.
+For model introspection to work you need to move (or copy) the `exp` folder of the desired model from the `assets/logs` to `assets/trained_models`. Choose the same `--prefix` as the prefix of your desired model's folder. We uploaded some tained weights; use `introdl` prefix for them.
 
 ```
 for model in lstm mean_lstm transformer mean_transformer
