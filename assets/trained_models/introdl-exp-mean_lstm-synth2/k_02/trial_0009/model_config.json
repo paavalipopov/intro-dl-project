@@ -1,0 +1,10 @@
+{
+  "lr": 0.000811706131574974,
+  "hidden_size": 204,
+  "num_layers": 3,
+  "bidirectional": false,
+  "dropout": 0.5853496128280836,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-synth2/runs/nmld83mk"
+}

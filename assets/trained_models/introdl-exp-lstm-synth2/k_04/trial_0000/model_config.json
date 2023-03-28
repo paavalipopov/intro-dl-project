@@ -1,0 +1,10 @@
+{
+  "lr": 0.000861750461851974,
+  "hidden_size": 172,
+  "num_layers": 1,
+  "bidirectional": true,
+  "dropout": 0.6786337933363714,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-lstm-synth2/runs/ikxrikah"
+}

@@ -1,0 +1,12 @@
+{
+  "lr": 0.0002580910580268208,
+  "head_hidden_size": 116,
+  "num_heads": 2,
+  "num_layers": 3,
+  "dropout": 0.5192710461797926,
+  "scaled": true,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-synth2/runs/8m85y29x"
+}

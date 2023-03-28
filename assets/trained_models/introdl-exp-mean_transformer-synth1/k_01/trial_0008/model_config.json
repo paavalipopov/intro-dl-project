@@ -1,0 +1,12 @@
+{
+  "lr": 0.00020482870677634724,
+  "head_hidden_size": 113,
+  "num_heads": 3,
+  "num_layers": 3,
+  "dropout": 0.23309060485601815,
+  "scaled": false,
+  "post": true,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-synth1/runs/pcxe340n"
+}

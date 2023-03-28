@@ -1,0 +1,12 @@
+{
+  "lr": 0.00025861685675074693,
+  "head_hidden_size": 88,
+  "num_heads": 3,
+  "num_layers": 2,
+  "dropout": 0.22069103295218212,
+  "scaled": false,
+  "post": true,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_transformer-synth1/runs/h525o9zo"
+}

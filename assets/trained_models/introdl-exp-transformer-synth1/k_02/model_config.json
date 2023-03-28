@@ -1,0 +1,12 @@
+{
+  "lr": 0.0007992594214269657,
+  "head_hidden_size": 123,
+  "num_heads": 2,
+  "num_layers": 3,
+  "dropout": 0.6267945382042683,
+  "scaled": false,
+  "post": true,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-transformer-synth1/runs/pkob64o0"
+}

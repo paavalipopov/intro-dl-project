@@ -1,0 +1,10 @@
+{
+  "lr": 0.0008942388111586398,
+  "hidden_size": 164,
+  "num_layers": 1,
+  "bidirectional": true,
+  "dropout": 0.4254652895713972,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-lstm-synth2/runs/m5e9vk14"
+}

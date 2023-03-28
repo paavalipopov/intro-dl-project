@@ -1,0 +1,12 @@
+{
+  "lr": 0.0008074099713683551,
+  "head_hidden_size": 115,
+  "num_heads": 3,
+  "num_layers": 2,
+  "dropout": 0.27517331100294906,
+  "scaled": true,
+  "post": true,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-transformer-synth2/runs/czanh7vc"
+}

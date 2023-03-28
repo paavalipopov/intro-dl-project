@@ -1,0 +1,10 @@
+{
+  "lr": 2.76931046620434e-05,
+  "hidden_size": 61,
+  "num_layers": 4,
+  "bidirectional": true,
+  "dropout": 0.6935227074469716,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-mean_lstm-synth2/runs/gty42sfb"
+}

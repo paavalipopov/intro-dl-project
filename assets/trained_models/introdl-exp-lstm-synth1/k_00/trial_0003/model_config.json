@@ -1,0 +1,10 @@
+{
+  "lr": 2.724172487801435e-05,
+  "hidden_size": 251,
+  "num_layers": 2,
+  "bidirectional": false,
+  "dropout": 0.6084386496054177,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-lstm-synth1/runs/g484pwka"
+}

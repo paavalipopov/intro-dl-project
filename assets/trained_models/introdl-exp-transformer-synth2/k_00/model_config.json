@@ -1,0 +1,12 @@
+{
+  "lr": 0.00024358068870499778,
+  "head_hidden_size": 85,
+  "num_heads": 4,
+  "num_layers": 2,
+  "dropout": 0.6555585127181776,
+  "scaled": false,
+  "post": false,
+  "input_size": 53,
+  "output_size": 2,
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-transformer-synth2/runs/90gak1li"
+}
