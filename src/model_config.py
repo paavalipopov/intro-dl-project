@@ -9,12 +9,12 @@ from numpy.random import default_rng
 from src.settings import LOGS_ROOT, HYPERPARAMS_ROOT
 
 
-def model_config_factory(conf, k=None, path=None):
+def model_config_factory(conf, k=None):
     """Model config factory"""
     if conf.mode == "tune":
         model_config = get_tune_config(conf)
     elif conf.mode == "exp":
-        model_config = get_best_config(conf, k, path)
+        model_config = get_best_config(conf, k)
     elif conf.mode == "introspection":
         model_config = get_introspection_config(conf, k)
     else:
@@ -54,8 +54,22 @@ def get_tune_config(conf):
         model_config["output_size"] = conf.data_info["n_classes"]
 
     elif conf.model == "dice":
-        # we might try to tune it, but it is not necessary
-        raise NotImplementedError("DICE model does not require tuning")
+        model_config["lstm"] = {}
+        model_config["lstm"]["bidirectional"] = bool(rng.integers(0, 2))
+        model_config["lstm"]["num_layers"] = rng.integers(1, 4)
+        model_config["lstm"]["hidden_size"] = rng.integers(20, 60)
+
+        model_config["clf"] = {}
+        model_config["clf"]["hidden_size"] = rng.integers(16, 128)
+        model_config["clf"]["num_layers"] = rng.integers(0, 3)
+
+        model_config["MHAtt"] = {}
+        model_config["MHAtt"]["n_heads"] = rng.integers(1, 4)
+        model_config["MHAtt"]["head_hidden_size"] = rng.integers(16, 64)
+        model_config["MHAtt"]["dropout"] = rng.uniform(0.1, 0.9)
+
+        model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
+        model_config["output_size"] = conf.data_info["n_classes"]
 
     else:
         raise ValueError(f"{conf.model} model is not recognized")
@@ -66,58 +80,48 @@ def get_tune_config(conf):
     return model_config
 
 
-def get_best_config(conf, k, path):
+def get_best_config(conf, k):
     """return best hyperparams for a model, extracted authomatically or from the path"""
-    if conf.model == "dice":
-        with open(f"{HYPERPARAMS_ROOT}/dice.json", "r", encoding="utf8") as fp:
+    if conf.glob:
+        with open(f"{HYPERPARAMS_ROOT}/{conf.model}.json", "r", encoding="utf8") as fp:
             model_config = json.load(fp)
             model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
             model_config["output_size"] = conf.data_info["n_classes"]
             return model_config
 
-    assert k is not None or path is not None
+    assert k is not None
 
     model_config = {}
 
-    if k is not None:
-        # find and load the best tuned model
-        exp_dirs = []
+    # find and load the best tuned model
+    exp_dirs = []
 
-        searched_dir = conf.project_name.split("-")
-        searched_dir = "-".join(searched_dir[2:4])
-        searched_dir = f"tune-{searched_dir}"
-        if conf.prefix != conf.default_prefix:
-            searched_dir = f"{conf.prefix}-{searched_dir}"
-        print(f"Searching trained model in {LOGS_ROOT}/*{searched_dir}")
-        for logdir in os.listdir(LOGS_ROOT):
-            if logdir.endswith(searched_dir):
-                exp_dirs.append(os.path.join(LOGS_ROOT, logdir))
+    searched_dir = conf.project_name.split("-")
+    searched_dir = "-".join(searched_dir[2:4])
+    searched_dir = f"tune-{searched_dir}"
+    if conf.prefix != conf.default_prefix:
+        searched_dir = f"{conf.prefix}-{searched_dir}"
+    print(f"Searching trained model in {LOGS_ROOT}/*{searched_dir}")
+    for logdir in os.listdir(LOGS_ROOT):
+        if logdir.endswith(searched_dir):
+            exp_dirs.append(os.path.join(LOGS_ROOT, logdir))
 
-        # if multiple run files found, choose the latest
-        exp_dir = sorted(exp_dirs)[-1]
-        print(f"Using best model from {exp_dir}")
+    # if multiple run files found, choose the latest
+    exp_dir = sorted(exp_dirs)[-1]
+    print(f"Using best model from {exp_dir}")
 
-        # get model config
-        df = pd.read_csv(
-            f"{exp_dir}/k_{k:02d}/runs.csv", delimiter=",", index_col=False
-        )
-        # pick hyperparams of a model with the highest test_score
-        best_config_path = df.loc[df["score"].idxmax()].to_dict()
-        best_config_path = best_config_path["path_to_config"]
-        with open(best_config_path, "r", encoding="utf8") as fp:
-            model_config = json.load(fp)
+    # get model config
+    df = pd.read_csv(f"{exp_dir}/k_{k:02d}/runs.csv", delimiter=",", index_col=False)
+    # pick hyperparams of a model with the highest test_score
+    best_config_path = df.loc[df["score"].idxmax()].to_dict()
+    best_config_path = best_config_path["path_to_config"]
+    with open(best_config_path, "r", encoding="utf8") as fp:
+        model_config = json.load(fp)
 
-        print("Loaded model config:")
-        print(model_config)
+    print("Loaded model config:")
+    print(model_config)
 
-        return model_config
-
-    if path is not None:
-        raise NotImplementedError("loading best hyperparams is not implemented yet")
-
-    raise ValueError(
-        "Can't return best model hyperparams if neither `path` nor `k` is provided"
-    )
+    return model_config
 
 
 def get_introspection_config(conf, k):
