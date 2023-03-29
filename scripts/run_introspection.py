@@ -12,9 +12,6 @@ from src.model import model_factory
 from src.introspection import introspector_factory
 
 
-os.environ["WANDB_SILENT"] = "true"
-
-
 def start(conf):
     """Main script for trained model introspection"""
     (
