@@ -67,10 +67,10 @@ def get_argparser(sys_argv):
     # some datasets have multiple classes; set to true if you want to load all classes
     boolean_flag(parser, "multiclass", default=False)
 
-    # whehter dataset should be z-scored over time
+    # whether dataset should be z-scored over time
     boolean_flag(parser, "zscore", default=False)
 
-    # whehter ICA components should be filtered
+    # whether ICA components should be filtered
     boolean_flag(parser, "filter-indices", default=True)
 
     # if you want to obtain or use single optimal set of hyperparams,
@@ -120,6 +120,11 @@ def get_argparser(sys_argv):
         default=30,
         help="Early stopping patience (default: 30)",
     )
+
+    # whether wandb should work silently
+    boolean_flag(parser, "wandb-silent", default=True)
+    # whether wandb should work offline
+    boolean_flag(parser, "wandb-offline", default=False)
 
     return parser
 
