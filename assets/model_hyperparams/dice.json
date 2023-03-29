@@ -1,9 +1,17 @@
 {
-  "lr": 1e-03,
+  "lr": 2e-4,
   "lstm": {
     "bidirectional": true,
     "num_layers": 1,
-    "hidden_size": 100
+    "hidden_size": 50
   },
-  "link": null
+  "clf": {
+    "hidden_size": 64,
+    "num_layers": 0
+  },
+  "MHAtt": {
+    "n_heads": 1,
+    "head_hidden_size": 48,
+    "dropout": 0.0
+  }
 }
