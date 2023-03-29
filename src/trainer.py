@@ -17,14 +17,14 @@ def trainer_factory(
     conf, model_config, dataloaders, model, optimizer, criterion, logger
 ):
     """Trainer factory"""
-    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
-        return Trainer(
+    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
+        trainer = Trainer(
             vars(conf), model_config, dataloaders, model, optimizer, criterion, logger
         )
-    if conf.model == "dice":
-        raise NotImplementedError()
+    else:
+        raise ValueError(f"{conf.model} is not recognized")
 
-    raise ValueError(f"{conf.model} is not recognized")
+    return trainer
 
 
 class Trainer:

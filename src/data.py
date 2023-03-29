@@ -54,13 +54,13 @@ def data_postfactory(conf, model_config, original_data):
     """
     Post-process the raw dataset data according to model_config (like sliding window)
     """
-    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
-        return original_data, conf.data_info
-    if conf.model == "dice":
-        # TODO: implement
-        raise NotImplementedError("DICE model data postprocessing is not implemented")
+    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
+        data = original_data
+        data_info = conf.data_info
+    else:
+        raise ValueError(f"'{conf.model}' model is not recognized")
 
-    raise ValueError(f"'{conf.model}' model is not recognized")
+    return data, data_info
 
 
 def load_dataset(conf, dataset):

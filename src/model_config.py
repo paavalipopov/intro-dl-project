@@ -6,7 +6,7 @@ import pandas as pd
 
 from numpy.random import default_rng
 
-from src.settings import LOGS_ROOT
+from src.settings import LOGS_ROOT, HYPERPARAMS_ROOT
 
 
 def model_config_factory(conf, k=None, path=None):
@@ -68,6 +68,13 @@ def get_tune_config(conf):
 
 def get_best_config(conf, k, path):
     """return best hyperparams for a model, extracted authomatically or from the path"""
+    if conf.model == "dice":
+        with open(f"{HYPERPARAMS_ROOT}/dice.json", "r", encoding="utf8") as fp:
+            model_config = json.load(fp)
+            model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
+            model_config["output_size"] = conf.data_info["n_classes"]
+            return model_config
+
     assert k is not None or path is not None
 
     model_config = {}
@@ -114,7 +121,7 @@ def get_best_config(conf, k, path):
 
 
 def get_introspection_config(conf, k):
-    """return best hyperparams for a model, extracted authomatically or from the path"""
+    """return hyperparams for model introspection for test_fold=k"""
     assert k is not None
 
     model_config = {}
