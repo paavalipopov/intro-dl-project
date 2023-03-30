@@ -15,6 +15,7 @@ from src.logger import logger_factory
 from src.dataloader import dataloader_factory
 from src.model import model_factory
 from src.optimizer import optimizer_factory
+from src.scheduler import scheduler_factory
 from src.criterion import criterion_factory
 from src.trainer import trainer_factory
 
@@ -77,8 +78,9 @@ def start(conf):
                         conf, data, outer_k, trial, inner_k
                     )
                     model = model_factory(conf, model_config)
-                    optimizer = optimizer_factory(conf, model, model_config)
                     criterion = criterion_factory(conf)
+                    optimizer = optimizer_factory(conf, model, model_config)
+                    scheduler = scheduler_factory(conf, optimizer, model_config)
 
                     logger, model_config["link"] = logger_factory(conf, model_config)
 
@@ -87,8 +89,9 @@ def start(conf):
                         model_config,
                         dataloaders,
                         model,
-                        optimizer,
                         criterion,
+                        optimizer,
+                        scheduler,
                         logger,
                     )
                     results = trainer.run()
@@ -150,8 +153,9 @@ def start(conf):
 
                 dataloaders = dataloader_factory(conf, data, outer_k, trial)
                 model = model_factory(conf, model_config)
-                optimizer = optimizer_factory(conf, model, model_config)
                 criterion = criterion_factory(conf)
+                optimizer = optimizer_factory(conf, model, model_config)
+                scheduler = scheduler_factory(conf, optimizer, model_config)
 
                 logger, model_config["link"] = logger_factory(conf, model_config)
 
@@ -160,8 +164,9 @@ def start(conf):
                     model_config,
                     dataloaders,
                     model,
-                    optimizer,
                     criterion,
+                    optimizer,
+                    scheduler,
                     logger,
                 )
                 results = trainer.run()

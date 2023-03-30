@@ -13,5 +13,9 @@
     "n_heads": 1,
     "head_hidden_size": 48,
     "dropout": 0.0
+  },
+  "scheduler": {
+    "patience": 4,
+    "factor": 0.5
   }
 }

@@ -14,12 +14,19 @@ from src.utils import EarlyStopping, NpEncoder
 
 
 def trainer_factory(
-    conf, model_config, dataloaders, model, optimizer, criterion, logger
+    conf, model_config, dataloaders, model, criterion, optimizer, scheduler, logger
 ):
     """Trainer factory"""
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
         trainer = Trainer(
-            vars(conf), model_config, dataloaders, model, optimizer, criterion, logger
+            vars(conf),
+            model_config,
+            dataloaders,
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            logger,
         )
     else:
         raise ValueError(f"{conf.model} is not recognized")
@@ -36,8 +43,9 @@ class Trainer:
         model_conf,
         dataloaders,
         model,
-        optimizer,
         criterion,
+        optimizer,
+        scheduler,
         logger,
     ) -> None:
 
@@ -45,8 +53,9 @@ class Trainer:
         self.model_config = model_conf
         self.dataloaders = dataloaders
         self.model = model
-        self.optimizer = optimizer
         self.criterion = criterion
+        self.optimizer = optimizer
+        self.scheduler = scheduler
         self.logger = logger
 
         params = self.count_params(self.model)
@@ -146,8 +155,9 @@ class Trainer:
 
             self.logger.log(results)
 
-            self.early_stopping(results["valid_average_loss"], self.model, epoch)
+            self.scheduler.step(results["valid_average_loss"])
 
+            self.early_stopping(results["valid_average_loss"], self.model, epoch)
             if self.early_stopping.early_stop:
                 break
 
