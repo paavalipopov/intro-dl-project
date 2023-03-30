@@ -18,7 +18,6 @@ def scheduler_factory(conf, optimizer, model_config):
     """Scheduler factory"""
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
         scheduler = DummyScheduler()
-
     elif conf.model == "dice":
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
@@ -26,5 +25,7 @@ def scheduler_factory(conf, optimizer, model_config):
             factor=model_config["scheduler"]["factor"],
             cooldown=0,
         )
+    else:
+        raise ValueError(f"{conf.model} is not recognized")
 
     return scheduler
