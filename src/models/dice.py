@@ -103,6 +103,34 @@ class DICE(nn.Module):
             nn.Linear(round(self.upscale2 * input_size ** 2), 1),
         )
 
+        self.init_weight()
+
+    def init_weight(self):
+        for name, param in self.lstm.named_parameters():
+            if "weight" in name:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.clf.named_parameters():
+            if "weight" in name:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.query_layer.named_parameters():
+            if "weight" in name:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.key_layer.named_parameters():
+            if "weight" in name:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.value_layer.named_parameters():
+            if "weight" in name:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.multihead_attn.named_parameters():
+            if "weight" in name:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.gta_embed.named_parameters():
+            if "weight" in name and param.dim() > 1:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+        for name, param in self.gta_attend.named_parameters():
+            if "weight" in name and param.dim() > 1:
+                nn.init.kaiming_normal_(param, mode="fan_in")
+
     def gta_attention(self, x, node_axis=1):
         # x.shape: [batch_size; time_len; n_channels * n_channels]
         x_readout = x.mean(node_axis, keepdim=True)
