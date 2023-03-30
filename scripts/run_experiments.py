@@ -78,7 +78,7 @@ def start(conf):
                         conf, data, outer_k, trial, inner_k
                     )
                     model = model_factory(conf, model_config)
-                    criterion = criterion_factory(conf)
+                    criterion = criterion_factory(conf, model_config)
                     optimizer = optimizer_factory(conf, model, model_config)
                     scheduler = scheduler_factory(conf, optimizer, model_config)
 
@@ -153,7 +153,7 @@ def start(conf):
 
                 dataloaders = dataloader_factory(conf, data, outer_k, trial)
                 model = model_factory(conf, model_config)
-                criterion = criterion_factory(conf)
+                criterion = criterion_factory(conf, model_config)
                 optimizer = optimizer_factory(conf, model, model_config)
                 scheduler = scheduler_factory(conf, optimizer, model_config)
 

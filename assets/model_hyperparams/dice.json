@@ -17,5 +17,6 @@
   "scheduler": {
     "patience": 4,
     "factor": 0.5
-  }
+  },
+  "reg_param": 1e-6
 }

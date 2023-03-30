@@ -1,4 +1,4 @@
-# pylint: disable=invalid-name, missing-function-docstring, missing-class-docstring, too-many-instance-attributes
+# pylint: disable=invalid-name, missing-function-docstring, missing-class-docstring, too-many-instance-attributes, too-many-branches
 """DICE model from https://github.com/UsmanMahmood27/DICE"""
 
 import torch
@@ -158,9 +158,6 @@ class DICE(nn.Module):
         # x.shape: [batch_size; time_len; n_channels]
         B, T, C = x.shape
 
-        # # TODO: debug
-        # print(f"DICE input shape: {x.shape}")
-
         # 1. pass input to LSTM; treat each channel as an independent single-feature time series
         x = x.permute(0, 2, 1)  # x.shape: [batch_size; n_channels; time_len]
         x = x.reshape(B * C, T, 1)  # x.shape: [batch_size * n_channels; time_len; 1]
@@ -170,9 +167,6 @@ class DICE(nn.Module):
         ##########################
         lstm_output = lstm_output.reshape(B, C, T, self.lstm_output_size)
         # lstm_output.shape: [batch_size; n_channels; time_len; lstm_hidden_size]
-
-        # # TODO: debug
-        # print(f"LSTM output shape: {lstm_output.shape}")
 
         # 2. pass lstm_output at each time point to multihead attention to reveal spatial connctions
         lstm_output = lstm_output.permute(2, 0, 1, 3)
@@ -188,9 +182,6 @@ class DICE(nn.Module):
         attn_weights = attn_weights.permute(1, 0, 2, 3)
         # attn_weights.shape: [batch_size; time_len; n_channels; n_channels]
 
-        # # TODO: debug
-        # print(f"Attention output shape: {attn_weights.shape}")
-
         # 3. pass attention weights to a global temporal attention to obrain global graph
         attn_weights = attn_weights.reshape(B, T, -1)
         # attn_weights.shape: [batch_size; time_len; n_channels * n_channels]
@@ -198,9 +189,6 @@ class DICE(nn.Module):
         FC = self.gta_attention(attn_weights)
         # FC.shape: [batch_size; n_channels * n_channels]
         ##########################
-
-        # # TODO: debug
-        # print(f"GTA output shape: {FC.shape}")
 
         # 4. Pass learned graph to the classifier to get predictions
         logits = self.clf(FC)

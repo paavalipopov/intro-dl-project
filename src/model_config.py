@@ -72,6 +72,8 @@ def get_tune_config(conf):
         model_config["scheduler"]["patience"] = rng.integers(1, conf.patience // 2)
         model_config["scheduler"]["factor"] = rng.uniform(0.1, 0.8)
 
+        model_config["reg_param"] = 10 ** rng.uniform(-10, 0)
+
         model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
         model_config["output_size"] = conf.data_info["n_classes"]
 
@@ -91,36 +93,38 @@ def get_best_config(conf, k):
             model_config = json.load(fp)
             model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
             model_config["output_size"] = conf.data_info["n_classes"]
-            return model_config
 
-    assert k is not None
+    else:
+        assert k is not None
 
-    model_config = {}
+        model_config = {}
 
-    # find and load the best tuned model
-    exp_dirs = []
+        # find and load the best tuned model
+        exp_dirs = []
 
-    searched_dir = conf.project_name.split("-")
-    searched_dir = "-".join(searched_dir[2:4])
-    searched_dir = f"tune-{searched_dir}"
-    if conf.prefix != conf.default_prefix:
-        searched_dir = f"{conf.prefix}-{searched_dir}"
-    print(f"Searching trained model in {LOGS_ROOT}/*{searched_dir}")
-    for logdir in os.listdir(LOGS_ROOT):
-        if logdir.endswith(searched_dir):
-            exp_dirs.append(os.path.join(LOGS_ROOT, logdir))
+        searched_dir = conf.project_name.split("-")
+        searched_dir = "-".join(searched_dir[2:4])
+        searched_dir = f"tune-{searched_dir}"
+        if conf.prefix != conf.default_prefix:
+            searched_dir = f"{conf.prefix}-{searched_dir}"
+        print(f"Searching trained model in {LOGS_ROOT}/*{searched_dir}")
+        for logdir in os.listdir(LOGS_ROOT):
+            if logdir.endswith(searched_dir):
+                exp_dirs.append(os.path.join(LOGS_ROOT, logdir))
 
-    # if multiple run files found, choose the latest
-    exp_dir = sorted(exp_dirs)[-1]
-    print(f"Using best model from {exp_dir}")
+        # if multiple run files found, choose the latest
+        exp_dir = sorted(exp_dirs)[-1]
+        print(f"Using best model from {exp_dir}")
 
-    # get model config
-    df = pd.read_csv(f"{exp_dir}/k_{k:02d}/runs.csv", delimiter=",", index_col=False)
-    # pick hyperparams of a model with the highest test_score
-    best_config_path = df.loc[df["score"].idxmax()].to_dict()
-    best_config_path = best_config_path["path_to_config"]
-    with open(best_config_path, "r", encoding="utf8") as fp:
-        model_config = json.load(fp)
+        # get model config
+        df = pd.read_csv(
+            f"{exp_dir}/k_{k:02d}/runs.csv", delimiter=",", index_col=False
+        )
+        # pick hyperparams of a model with the highest test_score
+        best_config_path = df.loc[df["score"].idxmax()].to_dict()
+        best_config_path = best_config_path["path_to_config"]
+        with open(best_config_path, "r", encoding="utf8") as fp:
+            model_config = json.load(fp)
 
     print("Loaded model config:")
     print(model_config)

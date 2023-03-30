@@ -4,16 +4,6 @@
 from torch import optim
 
 
-class DummyScheduler:
-    """Dummy scheduler that does nothing"""
-
-    def __init__(self):
-        pass
-
-    def step(self, metric):
-        pass
-
-
 def scheduler_factory(conf, optimizer, model_config):
     """Scheduler factory"""
     if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
@@ -29,3 +19,13 @@ def scheduler_factory(conf, optimizer, model_config):
         raise ValueError(f"{conf.model} is not recognized")
 
     return scheduler
+
+
+class DummyScheduler:
+    """Dummy scheduler that does nothing"""
+
+    def __init__(self):
+        pass
+
+    def step(self, metric):
+        pass
