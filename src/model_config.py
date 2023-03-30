@@ -68,6 +68,10 @@ def get_tune_config(conf):
         model_config["MHAtt"]["head_hidden_size"] = rng.integers(16, 64)
         model_config["MHAtt"]["dropout"] = rng.uniform(0.1, 0.9)
 
+        model_config["scheduler"] = {}
+        model_config["scheduler"]["patience"] = rng.integers(1, conf.patience // 2)
+        model_config["scheduler"]["factor"] = rng.uniform(0.1, 0.8)
+
         model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
         model_config["output_size"] = conf.data_info["n_classes"]
 
