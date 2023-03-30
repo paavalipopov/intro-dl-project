@@ -17,8 +17,19 @@ def trainer_factory(
     conf, model_config, dataloaders, model, criterion, optimizer, scheduler, logger
 ):
     """Trainer factory"""
-    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
+    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
         trainer = Trainer(
+            vars(conf),
+            model_config,
+            dataloaders,
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            logger,
+        )
+    elif conf.model == "dice":
+        trainer = DiceTrainer(
             vars(conf),
             model_config,
             dataloaders,
@@ -199,3 +210,97 @@ class Trainer:
             os.remove(f"{self.save_path}best_model.pt")
 
         return self.test_results
+
+
+class DiceTrainer(Trainer):
+    """Training script for DICE; has custom regularization"""
+
+    def __init__(
+        self,
+        conf,
+        model_conf,
+        dataloaders,
+        model,
+        criterion,
+        optimizer,
+        scheduler,
+        logger,
+    ):
+        super().__init__(
+            conf,
+            model_conf,
+            dataloaders,
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            logger,
+        )
+
+    def run_epoch(self, ds_name):
+        """Run single epoch on `ds_name` dataloder"""
+        is_train_dataset = ds_name == "train"
+
+        all_scores, all_targets = [], []
+        total_loss, total_size = 0.0, 0
+
+        self.model.train(is_train_dataset)
+        start_time = time.time()
+
+        with torch.set_grad_enabled(is_train_dataset):
+            for data, target in self.dataloaders[ds_name]:
+                data, target = data.to(self.device), target.to(self.device)
+                total_size += data.shape[0]
+
+                logits = self.model(data)
+                loss = self.criterion(logits, target)
+                score = torch.softmax(logits, dim=-1)
+
+                if is_train_dataset:
+                    loss = self.add_regularization(loss)
+
+                all_scores.append(score.cpu().detach().numpy())
+                all_targets.append(target.cpu().detach().numpy())
+                total_loss += loss.sum().item()
+
+                if is_train_dataset:
+                    self.optimizer.zero_grad()
+                    loss.backward()
+                    self.optimizer.step()
+
+        average_time = (time.time() - start_time) / total_size
+        average_loss = total_loss / total_size
+
+        y_test = np.hstack(all_targets)
+        y_score = np.vstack(all_scores)
+        y_pred = np.argmax(y_score, axis=-1).astype(np.int32)
+
+        report = get_classification_report(
+            y_true=y_test, y_pred=y_pred, y_score=y_score, beta=0.5
+        )
+
+        metrics = {
+            ds_name + "_accuracy": report["precision"].loc["accuracy"],
+            ds_name + "_score": report["auc"].loc["weighted"],
+            ds_name + "_average_loss": average_loss,
+            ds_name + "_average_time": average_time,
+        }
+
+        return metrics
+
+    def add_regularization(self, loss):
+        # TODO: move this to a custom loss function instead
+        reg = 1e-6
+
+        reg_loss = torch.zeros(1).to(self.device)
+
+        for name, param in self.model.gta_embed.named_parameters():
+            if "bias" not in name:
+                reg_loss += reg * torch.norm(param, p=1)
+
+        for name, param in self.model.gta_attend.named_parameters():
+            if "bias" not in name:
+                reg_loss += reg * torch.norm(param, p=1)
+
+        loss = loss + reg_loss.to(self.device)
+        return loss
