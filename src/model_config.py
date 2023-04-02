@@ -6,15 +6,15 @@ import pandas as pd
 
 from numpy.random import default_rng
 
-from src.settings import LOGS_ROOT
+from src.settings import LOGS_ROOT, HYPERPARAMS_ROOT
 
 
-def model_config_factory(conf, k=None, path=None):
+def model_config_factory(conf, k=None):
     """Model config factory"""
     if conf.mode == "tune":
         model_config = get_tune_config(conf)
     elif conf.mode == "exp":
-        model_config = get_best_config(conf, k, path)
+        model_config = get_best_config(conf, k)
     elif conf.mode == "introspection":
         model_config = get_introspection_config(conf, k)
     else:
@@ -54,8 +54,28 @@ def get_tune_config(conf):
         model_config["output_size"] = conf.data_info["n_classes"]
 
     elif conf.model == "dice":
-        # we might try to tune it, but it is not necessary
-        raise NotImplementedError("DICE model does not require tuning")
+        model_config["lstm"] = {}
+        model_config["lstm"]["bidirectional"] = bool(rng.integers(0, 2))
+        model_config["lstm"]["num_layers"] = rng.integers(1, 4)
+        model_config["lstm"]["hidden_size"] = rng.integers(20, 60)
+
+        model_config["clf"] = {}
+        model_config["clf"]["hidden_size"] = rng.integers(16, 128)
+        model_config["clf"]["num_layers"] = rng.integers(0, 3)
+
+        model_config["MHAtt"] = {}
+        model_config["MHAtt"]["n_heads"] = rng.integers(1, 4)
+        model_config["MHAtt"]["head_hidden_size"] = rng.integers(16, 64)
+        model_config["MHAtt"]["dropout"] = rng.uniform(0.1, 0.9)
+
+        model_config["scheduler"] = {}
+        model_config["scheduler"]["patience"] = rng.integers(1, conf.patience // 2)
+        model_config["scheduler"]["factor"] = rng.uniform(0.1, 0.8)
+
+        model_config["reg_param"] = 10 ** rng.uniform(-10, 0)
+
+        model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
+        model_config["output_size"] = conf.data_info["n_classes"]
 
     else:
         raise ValueError(f"{conf.model} model is not recognized")
@@ -66,13 +86,19 @@ def get_tune_config(conf):
     return model_config
 
 
-def get_best_config(conf, k, path):
+def get_best_config(conf, k):
     """return best hyperparams for a model, extracted authomatically or from the path"""
-    assert k is not None or path is not None
+    if conf.glob:
+        with open(f"{HYPERPARAMS_ROOT}/{conf.model}.json", "r", encoding="utf8") as fp:
+            model_config = json.load(fp)
+            model_config["input_size"] = conf.data_info["data_shape"]["main"][2]
+            model_config["output_size"] = conf.data_info["n_classes"]
 
-    model_config = {}
+    else:
+        assert k is not None
 
-    if k is not None:
+        model_config = {}
+
         # find and load the best tuned model
         exp_dirs = []
 
@@ -100,21 +126,14 @@ def get_best_config(conf, k, path):
         with open(best_config_path, "r", encoding="utf8") as fp:
             model_config = json.load(fp)
 
-        print("Loaded model config:")
-        print(model_config)
+    print("Loaded model config:")
+    print(model_config)
 
-        return model_config
-
-    if path is not None:
-        raise NotImplementedError("loading best hyperparams is not implemented yet")
-
-    raise ValueError(
-        "Can't return best model hyperparams if neither `path` nor `k` is provided"
-    )
+    return model_config
 
 
 def get_introspection_config(conf, k):
-    """return best hyperparams for a model, extracted authomatically or from the path"""
+    """return hyperparams for model introspection for test_fold=k"""
     assert k is not None
 
     model_config = {}

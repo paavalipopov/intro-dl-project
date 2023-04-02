@@ -8,10 +8,8 @@ from torch.utils.data import DataLoader, TensorDataset
 
 def dataloader_factory(conf, data, outer_k, trial=None, inner_k=None):
     """Return dataloaders according to the used model"""
-    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
+    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
         dataloaders = common_dataloader(conf, data, outer_k, trial, inner_k)
-    elif conf.model == "dice":
-        dataloaders = dice_dataloader(conf, data, outer_k, trial, inner_k)
     else:
         raise ValueError(f"'{conf.model}' model is not recognized")
 
@@ -116,8 +114,3 @@ def common_dataloader(conf, data, outer_k, trial=None, inner_k=None):
     ####
 
     return dataloaders
-
-
-def dice_dataloader(conf, model_config, data, outer_k, trial, inner_k=None):
-    """return DICE model dataloders"""
-    raise NotImplementedError()

@@ -1,4 +1,6 @@
+# pylint: disable=unused-argument
 """Optimizer factory"""
+
 from torch import optim
 
 

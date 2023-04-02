@@ -22,6 +22,8 @@ def project_name(conf):
         proj_dataset_name = f"multiclass_{proj_dataset_name}"
     if conf.zscore:
         proj_dataset_name = f"zscore_{proj_dataset_name}"
+    if conf.glob:
+        proj_dataset_name = f"global_{proj_dataset_name}"
 
     proj_name = f"{conf.prefix}-{conf.mode}-{conf.model}-{proj_dataset_name}"
     #### not applicable for this project

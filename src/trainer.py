@@ -14,17 +14,24 @@ from src.utils import EarlyStopping, NpEncoder
 
 
 def trainer_factory(
-    conf, model_config, dataloaders, model, optimizer, criterion, logger
+    conf, model_config, dataloaders, model, criterion, optimizer, scheduler, logger
 ):
     """Trainer factory"""
-    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
-        return Trainer(
-            vars(conf), model_config, dataloaders, model, optimizer, criterion, logger
+    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
+        trainer = Trainer(
+            vars(conf),
+            model_config,
+            dataloaders,
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            logger,
         )
-    if conf.model == "dice":
-        raise NotImplementedError()
+    else:
+        raise ValueError(f"{conf.model} is not recognized")
 
-    raise ValueError(f"{conf.model} is not recognized")
+    return trainer
 
 
 class Trainer:
@@ -36,8 +43,9 @@ class Trainer:
         model_conf,
         dataloaders,
         model,
-        optimizer,
         criterion,
+        optimizer,
+        scheduler,
         logger,
     ) -> None:
 
@@ -45,8 +53,9 @@ class Trainer:
         self.model_config = model_conf
         self.dataloaders = dataloaders
         self.model = model
-        self.optimizer = optimizer
         self.criterion = criterion
+        self.optimizer = optimizer
+        self.scheduler = scheduler
         self.logger = logger
 
         params = self.count_params(self.model)
@@ -104,7 +113,7 @@ class Trainer:
                 total_size += data.shape[0]
 
                 logits = self.model(data)
-                loss = self.criterion(logits, target)
+                loss = self.criterion(logits, target, self.model, self.device)
                 score = torch.softmax(logits, dim=-1)
 
                 all_scores.append(score.cpu().detach().numpy())
@@ -146,8 +155,9 @@ class Trainer:
 
             self.logger.log(results)
 
-            self.early_stopping(results["valid_average_loss"], self.model, epoch)
+            self.scheduler.step(results["valid_average_loss"])
 
+            self.early_stopping(results["valid_average_loss"], self.model, epoch)
             if self.early_stopping.early_stop:
                 break
 

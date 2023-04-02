@@ -15,15 +15,19 @@ from src.logger import logger_factory
 from src.dataloader import dataloader_factory
 from src.model import model_factory
 from src.optimizer import optimizer_factory
+from src.scheduler import scheduler_factory
 from src.criterion import criterion_factory
 from src.trainer import trainer_factory
 
 
-os.environ["WANDB_SILENT"] = "true"
-
-
 def start(conf):
     """Main script for starting the experiments"""
+
+    # set up wandb environment
+    os.environ["WANDB_SILENT"] = "true" if conf.wandb_silent else "false"
+    os.environ["WANDB_MODE"] = "offline" if conf.wandb_offline else "online"
+
+    # get project name and dir, get resumed params if mode is 'resume'
     conf.project_name, conf.project_dir = project_name(conf)
     if conf.mode == "resume":
         assert conf.path is not None
@@ -36,6 +40,7 @@ def start(conf):
     with open(conf.project_dir + "general_config.json", "w", encoding="utf8") as fp:
         json.dump(vars(conf), fp, indent=2, cls=NpEncoder)
 
+    # load raw dataset
     original_data, conf.data_info = data_factory(conf)
 
     if conf.mode == "tune":
@@ -52,6 +57,7 @@ def start(conf):
                     model_config,
                     original_data,
                 )
+                model_config["data_info"] = conf.data_info
 
                 # inner CV: CV of the chosen hyperparams
                 for inner_k in range(conf.n_splits):
@@ -72,8 +78,9 @@ def start(conf):
                         conf, data, outer_k, trial, inner_k
                     )
                     model = model_factory(conf, model_config)
+                    criterion = criterion_factory(conf, model_config)
                     optimizer = optimizer_factory(conf, model, model_config)
-                    criterion = criterion_factory(conf)
+                    scheduler = scheduler_factory(conf, optimizer, model_config)
 
                     logger, model_config["link"] = logger_factory(conf, model_config)
 
@@ -82,8 +89,9 @@ def start(conf):
                         model_config,
                         dataloaders,
                         model,
-                        optimizer,
                         criterion,
+                        optimizer,
+                        scheduler,
                         logger,
                     )
                     results = trainer.run()
@@ -145,8 +153,9 @@ def start(conf):
 
                 dataloaders = dataloader_factory(conf, data, outer_k, trial)
                 model = model_factory(conf, model_config)
+                criterion = criterion_factory(conf, model_config)
                 optimizer = optimizer_factory(conf, model, model_config)
-                criterion = criterion_factory(conf)
+                scheduler = scheduler_factory(conf, optimizer, model_config)
 
                 logger, model_config["link"] = logger_factory(conf, model_config)
 
@@ -155,8 +164,9 @@ def start(conf):
                     model_config,
                     dataloaders,
                     model,
-                    optimizer,
                     criterion,
+                    optimizer,
+                    scheduler,
                     logger,
                 )
                 results = trainer.run()
