@@ -1,0 +1,35 @@
+{
+  "lr": 0.00024639169687565364,
+  "lstm": {
+    "bidirectional": true,
+    "num_layers": 3,
+    "hidden_size": 42
+  },
+  "clf": {
+    "hidden_size": 17,
+    "num_layers": 2
+  },
+  "MHAtt": {
+    "n_heads": 1,
+    "head_hidden_size": 54,
+    "dropout": 0.14616352266809518
+  },
+  "scheduler": {
+    "patience": 7,
+    "factor": 0.18184109407088753
+  },
+  "reg_param": 4.912466514649998e-06,
+  "input_size": 53,
+  "output_size": 2,
+  "data_info": {
+    "data_shape": {
+      "main": [
+        200,
+        140,
+        53
+      ]
+    },
+    "n_classes": 2
+  },
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-dice-synth1/runs/nmdfa482"
+}

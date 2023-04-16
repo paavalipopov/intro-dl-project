@@ -1,0 +1,23 @@
+{
+  "mode": "exp",
+  "path": null,
+  "model": "dice",
+  "ds": "abide",
+  "test_ds": null,
+  "multiclass": false,
+  "zscore": false,
+  "filter_indices": true,
+  "glob": true,
+  "preserve_checkpoints": true,
+  "prefix": "introdl",
+  "n_trials": 10,
+  "n_splits": 5,
+  "max_epochs": 200,
+  "batch_size": 64,
+  "patience": 30,
+  "wandb_silent": true,
+  "wandb_offline": false,
+  "default_prefix": "230404.221942",
+  "project_name": "introdl-exp-dice-global_abide",
+  "project_dir": "/data/users2/ppopov1/intro-dl-project/assets/logs/introdl-exp-dice-global_abide/"
+}

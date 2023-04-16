@@ -1,0 +1,35 @@
+{
+  "lr": 0.0001960011015049653,
+  "lstm": {
+    "bidirectional": true,
+    "num_layers": 1,
+    "hidden_size": 53
+  },
+  "clf": {
+    "hidden_size": 80,
+    "num_layers": 1
+  },
+  "MHAtt": {
+    "n_heads": 3,
+    "head_hidden_size": 45,
+    "dropout": 0.1873249949433191
+  },
+  "scheduler": {
+    "patience": 1,
+    "factor": 0.2775270971824991
+  },
+  "reg_param": 1.525372167093297e-09,
+  "input_size": 53,
+  "output_size": 2,
+  "data_info": {
+    "data_shape": {
+      "main": [
+        569,
+        140,
+        53
+      ]
+    },
+    "n_classes": 2
+  },
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-dice-abide/runs/clk5kgw1"
+}

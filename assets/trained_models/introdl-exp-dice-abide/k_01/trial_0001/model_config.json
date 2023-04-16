@@ -1,0 +1,35 @@
+{
+  "lr": 1.3332825869656901e-05,
+  "lstm": {
+    "bidirectional": true,
+    "num_layers": 1,
+    "hidden_size": 32
+  },
+  "clf": {
+    "hidden_size": 92,
+    "num_layers": 2
+  },
+  "MHAtt": {
+    "n_heads": 2,
+    "head_hidden_size": 57,
+    "dropout": 0.7697537272408415
+  },
+  "scheduler": {
+    "patience": 11,
+    "factor": 0.7836444252301369
+  },
+  "reg_param": 1.1583405465545735e-07,
+  "input_size": 53,
+  "output_size": 2,
+  "data_info": {
+    "data_shape": {
+      "main": [
+        569,
+        140,
+        53
+      ]
+    },
+    "n_classes": 2
+  },
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-dice-abide/runs/opk6t8yq"
+}

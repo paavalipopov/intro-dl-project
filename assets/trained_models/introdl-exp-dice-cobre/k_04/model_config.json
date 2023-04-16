@@ -1,0 +1,35 @@
+{
+  "lr": 0.0009060364375268258,
+  "lstm": {
+    "bidirectional": true,
+    "num_layers": 1,
+    "hidden_size": 38
+  },
+  "clf": {
+    "hidden_size": 126,
+    "num_layers": 0
+  },
+  "MHAtt": {
+    "n_heads": 2,
+    "head_hidden_size": 28,
+    "dropout": 0.5818781720357649
+  },
+  "scheduler": {
+    "patience": 11,
+    "factor": 0.22993338880914102
+  },
+  "reg_param": 9.790153246944024e-06,
+  "input_size": 53,
+  "output_size": 2,
+  "data_info": {
+    "data_shape": {
+      "main": [
+        157,
+        140,
+        53
+      ]
+    },
+    "n_classes": 2
+  },
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-dice-cobre/runs/00dxwoff"
+}

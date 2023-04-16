@@ -1,0 +1,35 @@
+{
+  "lr": 1.63504066500446e-05,
+  "lstm": {
+    "bidirectional": false,
+    "num_layers": 1,
+    "hidden_size": 51
+  },
+  "clf": {
+    "hidden_size": 98,
+    "num_layers": 2
+  },
+  "MHAtt": {
+    "n_heads": 2,
+    "head_hidden_size": 24,
+    "dropout": 0.6664335630606503
+  },
+  "scheduler": {
+    "patience": 10,
+    "factor": 0.4251545866135652
+  },
+  "reg_param": 0.3364885216630663,
+  "input_size": 53,
+  "output_size": 2,
+  "data_info": {
+    "data_shape": {
+      "main": [
+        200,
+        140,
+        53
+      ]
+    },
+    "n_classes": 2
+  },
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-dice-synth1/runs/sx28co2x"
+}

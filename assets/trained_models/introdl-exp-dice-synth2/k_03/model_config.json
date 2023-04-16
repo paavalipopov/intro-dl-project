@@ -1,0 +1,35 @@
+{
+  "lr": 0.0002070880939194055,
+  "lstm": {
+    "bidirectional": true,
+    "num_layers": 1,
+    "hidden_size": 43
+  },
+  "clf": {
+    "hidden_size": 69,
+    "num_layers": 2
+  },
+  "MHAtt": {
+    "n_heads": 2,
+    "head_hidden_size": 22,
+    "dropout": 0.7781867494976974
+  },
+  "scheduler": {
+    "patience": 11,
+    "factor": 0.6021485003753809
+  },
+  "reg_param": 0.005751706525731618,
+  "input_size": 53,
+  "output_size": 2,
+  "data_info": {
+    "data_shape": {
+      "main": [
+        200,
+        140,
+        53
+      ]
+    },
+    "n_classes": 2
+  },
+  "link": "https://wandb.ai/pavalipopov/introdl-tune-dice-synth2/runs/1l70aflu"
+}
