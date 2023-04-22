@@ -21,7 +21,7 @@ PYTHONPATH=./ python scripts/generate_datasets.py
 # Examples
 ## Training
 ```
-for model in lstm mean_lstm transformer mean_transformer
+for model in lstm mean_lstm transformer mean_transformer dice
 do
     for dataset in cobre abide synth1 synth2
     do
@@ -40,7 +40,7 @@ PYTHONPATH=./ python scripts/run_experiments.py --mode exp --model lstm --ds abi
 For model introspection to work you need to move (or copy) the `exp` folder of the desired model from the `assets/logs` to `assets/trained_models`. Choose the same `--prefix` as the prefix of your desired model's folder. We uploaded some tained weights; use `introdl` prefix for them.
 
 ```
-for model in lstm mean_lstm transformer mean_transformer
+for model in lstm mean_lstm transformer mean_transformer dice
 do
     for dataset in cobre abide synth1 synth2
     do
@@ -64,9 +64,12 @@ PYTHONPATH=./ python scripts/run_introspection.py --model lstm --ds abide --meth
     - `mean_lstm`
     - `transformer`
     - `mean_transformer`
+    - `dice`
 - `--ds`: dataset for the experiments
     - `cobre`
     - `abide`
+    - `synth1`
+    - `synth2`
 
 
 ### Optional
