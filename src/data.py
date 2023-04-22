@@ -83,16 +83,9 @@ def load_dataset(conf, dataset):
     elif dataset == "synth2":
         data = np.load(f"{DATA_ROOT}/synth2/data.npz")
         labels = data["labels"]
-        # mask = data["masks"]
+        mask = data["masks"]
         data = data["data"]
 
-        ###
-        mask = np.zeros_like(data)
-        for i in range(mask.shape[0] // 2, mask.shape[0]):
-            for j in range(mask.shape[1]):
-                for k in range(mask.shape[2]):
-                    if k == 2 * j:
-                        mask[i, j, k] = 1
     else:
         raise NotImplementedError(f"'{dataset}' dataset is not found")
 

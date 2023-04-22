@@ -18,10 +18,8 @@ from src.utils import NpEncoder
 
 def introspector_factory(conf, model_config, dataloaders, model):
     """Introspector factory"""
-    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer"]:
+    if conf.model in ["lstm", "mean_lstm", "transformer", "mean_transformer", "dice"]:
         return Introspector(vars(conf), model_config, dataloaders, model)
-    if conf.model == "dice":
-        raise NotImplementedError()
 
     raise ValueError(f"{conf.model} is not recognized")
 
@@ -30,7 +28,6 @@ class Introspector:
     """Basic introspector"""
 
     def __init__(self, conf, model_conf, dataloaders, model) -> None:
-
         self.config = conf
         self.methods = conf["methods"]
         self.save_path = conf["run_dir"]
@@ -96,6 +93,12 @@ class Introspector:
                     # dpi=300,
                     bbox_inches="tight",
                 )
+                plt.savefig(
+                    f"{self.save_path}/{method}/colormap/general_{target}.png",
+                    format="png",
+                    dpi=300,
+                    bbox_inches="tight",
+                )
                 plt.close()
 
                 # bar charts: summarizes gradients at each time point
@@ -112,6 +115,12 @@ class Introspector:
                     f"{self.save_path}/{method}/barchart/general_{target}.eps",
                     format="eps",
                     # dpi=300,
+                    bbox_inches="tight",
+                )
+                plt.savefig(
+                    f"{self.save_path}/{method}/barchart/general_{target}.png",
+                    format="png",
+                    dpi=300,
                     bbox_inches="tight",
                 )
                 plt.close()
@@ -158,6 +167,12 @@ class Introspector:
                     # dpi=300,
                     bbox_inches="tight",
                 )
+                plt.savefig(
+                    f"{self.save_path}/{method}/colormap/{i:04d}_target_{target}.png",
+                    format="png",
+                    dpi=300,
+                    bbox_inches="tight",
+                )
                 plt.close()
 
                 # bar charts: summarizes gradients at each time point
@@ -175,6 +190,12 @@ class Introspector:
                     f"{self.save_path}/{method}/barchart/{i:04d}_target_{target}.eps",
                     format="eps",
                     # dpi=300,
+                    bbox_inches="tight",
+                )
+                plt.savefig(
+                    f"{self.save_path}/{method}/barchart/{i:04d}_target_{target}.png",
+                    format="png",
+                    dpi=300,
                     bbox_inches="tight",
                 )
                 plt.close()
