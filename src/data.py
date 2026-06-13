@@ -98,7 +98,7 @@ def load_dataset(conf, dataset):
 
 def load_ABIDE1(
     dataset_path: str = DATA_ROOT.joinpath("abide/ABIDE1_AllData.h5"),
-    indices_path: str = DATA_ROOT.joinpath("abide/correct_indices_GSP.csv"),
+    indices_path: str = DATA_ROOT.joinpath("abide/ICA_correct_order.csv"),
     labels_path: str = DATA_ROOT.joinpath("abide/labels_ABIDE1.csv"),
     filter_indices: bool = True,
 ):
@@ -108,7 +108,7 @@ def load_ABIDE1(
     Input:
     dataset_path: str = DATA_ROOT.joinpath("abide/ABIDE1_AllData.h5")
     - path to the dataset
-    indices_path: str = DATA_ROOT.joinpath("abide/correct_indices_GSP.csv")
+    indices_path: str = DATA_ROOT.joinpath("abide/ICA_correct_order.csv")
     - path to correct indices/components
     labels_path: str = DATA_ROOT.joinpath("abide/labels_ABIDE1.csv")
     - path to labels
@@ -152,7 +152,7 @@ def load_ABIDE1(
 
 def load_COBRE(
     dataset_path: str = DATA_ROOT.joinpath("cobre/COBRE_AllData.h5"),
-    indices_path: str = DATA_ROOT.joinpath("cobre/correct_indices_GSP.csv"),
+    indices_path: str = DATA_ROOT.joinpath("cobre/ICA_correct_order.csv"),
     labels_path: str = DATA_ROOT.joinpath("cobre/labels_COBRE.csv"),
     filter_indices: bool = True,
 ):
@@ -162,7 +162,7 @@ def load_COBRE(
     Input:
     dataset_path: str = DATA_ROOT.joinpath("cobre/COBRE_AllData.h5")
     - path to the dataset
-    indices_path: str = DATA_ROOT.joinpath("cobre/correct_indices_GSP.csv")
+    indices_path: str = DATA_ROOT.joinpath("cobre/ICA_correct_order.csv")
     - path to correct indices/components
     labels_path: str = DATA_ROOT.joinpath("cobre/labels_COBRE.csv")
     - path to labels

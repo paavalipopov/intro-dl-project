@@ -14,8 +14,8 @@ items = [
         DATA_ROOT.joinpath("abide/labels_ABIDE1.csv"),
     ),
     (
-        "https://raw.githubusercontent.com/UsmanMahmood27/MILC/master/IndicesAndLabels/correct_indices_GSP.csv",
-        DATA_ROOT.joinpath("abide/correct_indices_GSP.csv"),
+        "https://raw.githubusercontent.com/paavalipopov/intro-dl-project/main/ICA_correct_order.csv",
+        DATA_ROOT.joinpath("abide/ICA_correct_order.csv"),
     ),
     (
         "https://raw.githubusercontent.com/UsmanMahmood27/MILC/master/Data/COBRE_AllData.h5",
@@ -26,8 +26,8 @@ items = [
         DATA_ROOT.joinpath("cobre/labels_COBRE.csv"),
     ),
     (
-        "https://raw.githubusercontent.com/UsmanMahmood27/MILC/master/IndicesAndLabels/correct_indices_GSP.csv",
-        DATA_ROOT.joinpath("cobre/correct_indices_GSP.csv"),
+        "https://raw.githubusercontent.com/paavalipopov/intro-dl-project/main/ICA_correct_order.csv",
+        DATA_ROOT.joinpath("cobre/ICA_correct_order.csv"),
     ),
 ]
 
