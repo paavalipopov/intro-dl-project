@@ -18,6 +18,10 @@ items = [
         DATA_ROOT.joinpath("abide/ICA_correct_order.csv"),
     ),
     (
+        "https://raw.githubusercontent.com/paavalipopov/intro-dl-project/main/ICN_coordinates.csv",
+        DATA_ROOT.joinpath("abide/ICN_coordinates.csv"),
+    ),
+    (
         "https://raw.githubusercontent.com/UsmanMahmood27/MILC/master/Data/COBRE_AllData.h5",
         DATA_ROOT.joinpath("cobre/COBRE_AllData.h5"),
     ),
@@ -28,6 +32,10 @@ items = [
     (
         "https://raw.githubusercontent.com/paavalipopov/intro-dl-project/main/ICA_correct_order.csv",
         DATA_ROOT.joinpath("cobre/ICA_correct_order.csv"),
+    ),
+    (
+        "https://raw.githubusercontent.com/paavalipopov/intro-dl-project/main/ICN_coordinates.csv",
+        DATA_ROOT.joinpath("cobre/ICN_coordinates.csv"),
     ),
 ]
 
